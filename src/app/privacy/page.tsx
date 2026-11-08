@@ -9,7 +9,7 @@ export default function Privacy() {
   const op = operator();
   const mail = op.email === TO_FILL ? op.email : <a href={`mailto:${op.email}`}>{op.email}</a>;
   return (
-    <Page index="Legal" title="Privacy policy" draft missing={op.missing}>
+    <Page index="Legal" title="Privacy policy" draft={op.missing.length > 0} missing={op.missing}>
       <p><strong>Last updated:</strong> {POLICY_UPDATED}</p>
       <p>
         Gharmatch is an open-source project. You can read how our code handles your data in our <a href={REPO_URL} target="_blank" rel="noopener noreferrer">public repository</a>, for example <code>src/server/contacts.ts</code> and <code>src/lib/safety.ts</code>. This policy explains what personal data the live Gharmatch service collects, why, and your rights under India’s <strong>Digital Personal Data Protection Act, 2023</strong> (“DPDP Act”). The project maintainer named in section 7 is the Data Fiduciary, and you are the Data Principal.

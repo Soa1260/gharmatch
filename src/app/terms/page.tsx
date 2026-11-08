@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Terms of use and community mediation
 export default function Terms() {
   const op = operator();
   return (
-    <Page index="Legal" title="Terms of use" draft missing={op.missing}>
+    <Page index="Legal" title="Terms of use" draft={op.missing.length > 0} missing={op.missing}>
       <p><strong>Last updated:</strong> {POLICY_UPDATED}</p>
       <p>
         <strong>Gharmatch</strong> is an open-source, community-driven project built to make finding and letting homes in Ahmedabad and Gandhinagar fairer and more transparent, by matching on house rules.

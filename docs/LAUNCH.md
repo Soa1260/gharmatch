@@ -1,35 +1,44 @@
 # Launch checklist
 
-## Legal and policy (blockers)
-- [ ] A lawyer reads `docs/LEGAL.md` and reviews `/privacy` and `/terms`, then remove the `draft` banner from both pages
-- [ ] Set `NEXT_PUBLIC_GRIEVANCE_OFFICER` and `NEXT_PUBLIC_GRIEVANCE_EMAIL` as plain variables in Vercel. The pages show "[to be filled before launch]" until you do
-- [x] `LICENSE` added: GNU AGPL v3. The footer links to the source, which the AGPL requires for a network service. Keep the repository public and current with what is deployed
-- [ ] Ask your lawyer how the AGPL fits your plan to charge for features later (it allows selling, but any modified hosted version must publish its source)
+Status as of the pre-launch pass on 9 November 2026. `[x]` is done and checked, `[ ]` is still open.
+
+## Legal and policy
+- [x] Terms of Use and Privacy Policy written (community edition) and backed by code. See `docs/LEGAL.md`
+- [x] Lawyer review reported as done by the owner. The draft banner on `/terms` and `/privacy` now shows only while a setting is missing
+- [x] `NEXT_PUBLIC_GRIEVANCE_OFFICER` and `NEXT_PUBLIC_GRIEVANCE_EMAIL` set as plain variables in Vercel
+- [ ] Confirm with your lawyer the open questions in `docs/LEGAL.md`: 24 versus 72 hours, a first-name-only officer, the AGPL with future paid features
+- [x] `LICENSE`: GNU AGPL v3. The footer links to the source. Keep the repository public and current with what is deployed
 - [ ] Be able to meet the response times the pages promise (24 hours to acknowledge, 15 days to resolve). Someone must read the grievance inbox daily
 - [ ] When either document changes, bump `POLICY_VERSION` and `POLICY_UPDATED` in `src/lib/legal.ts`. Everyone is then asked to agree again
-- [ ] Decide on the legal entity operating the service. The terms name the operator and set Ahmedabad / Gandhinagar courts
 - [ ] Review the women-only and men-only listing option with your lawyer
 - [ ] Review the discriminatory-term lists in `src/lib/textGuard.ts` with someone who knows Gujarati usage
 
 ## Accounts and config
-- [ ] Neon production project, migrations applied, backups understood (free tier history is short)
-- [ ] Google OAuth consent screen published, production redirect URI added
-- [ ] Optional: Resend domain verified (SPF, DKIM) for report and appeal emails. Sign-in is Google only, so nobody is locked out without it
-- [ ] Decide on phone-code verification for landlords before real traffic: Google accounts are free to create, so Google-only sign-in is not strong accountability on its own
-- [ ] All environment variables set in Vercel for Production
-- [ ] Remove the test-only header **Sign out** button: `testSignOutAction` in `src/app/actions.ts` and the two `NODE_ENV !== "production"` blocks in `src/components/site/Header.tsx`. It is already hidden in production builds, so this is cleanup. Sign-out stays on `/account`
+- [x] Neon database with both migrations applied
+- [x] Google OAuth client with localhost and live redirect URIs
+- [ ] **Google OAuth consent screen: move from Testing to In production.** While it says Testing, only listed test users can sign in, so real people are locked out
+- [x] Cloudflare R2 bucket, token and public URL working
+- [x] All required environment variables set in Vercel for Production
+- [x] Node pinned to 24.x in `package.json`
+- [x] Test-only header Sign out button removed. Sign-out is on `/account`
 - [ ] `ADMIN_EMAILS` contains at least two people
-- [ ] Replace `*.vercel.app` with your own domain when ready, and update `AUTH_URL` and `NEXT_PUBLIC_SITE_URL`
+- [ ] Optional: Resend domain verified (SPF, DKIM) for report and appeal emails
+- [ ] Decide on phone-code verification for landlords before real traffic
+- [ ] Connect the Vercel GitHub app so pushes deploy by themselves
+- [ ] R2: attach a custom domain to the bucket (`r2.dev` addresses are rate-limited)
+- [ ] Replace `*.vercel.app` with your own domain when ready, and update `AUTH_URL`, `NEXT_PUBLIC_SITE_URL` and the Google redirect URIs
 
 ## Safety
-- [ ] You have read the first 20 reports process: who checks `/admin/reports` and how often (daily at least)
-- [ ] A phone number for emergencies (112) is shown in the safety guide
-- [ ] Test the woman's journey end to end with a friend
+- [ ] Decide who checks `/admin/reports` and how often (daily at least)
+- [x] Emergency numbers shown in the safety guide, tap-to-call
+- [ ] Verify 112, 1091 and 1930 are current, and the Sakhi centre addresses
+- [ ] Test the woman's journey end to end with a woman
 
 ## Content
-- [ ] Sample listings are not shown in production (they are not, but confirm)
+- [x] Sample listings are not shown in production
+- [ ] Clear the test data from Neon (listings, searches, interests, visits, reports, audit log). `docs/CLEANUP.md`
 - [ ] 20 to 30 real listings seeded with owners' consent (see `docs/SEEDING.md`)
 
 ## Limits
-- [ ] Vercel Usage page checked weekly: bandwidth, function invocations, Neon compute hours, Resend sends
+- [ ] Vercel Usage page checked weekly: bandwidth, function invocations, Neon compute hours
 - [ ] Remember the Hobby plan is non-commercial

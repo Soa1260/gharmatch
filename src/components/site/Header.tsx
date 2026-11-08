@@ -4,7 +4,6 @@ import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { testSignOutAction } from "@/app/actions";
 import { duration, ease } from "@/lib/motion";
 import { LogoMark } from "./LogoMark";
 
@@ -62,12 +61,6 @@ export function Header() {
               {accountLink.label}
             </Link>
           )}
-          {/* TEST ONLY: hidden in production builds. Remove with testSignOutAction before launch. */}
-          {signedIn && process.env.NODE_ENV !== "production" ? (
-            <form action={testSignOutAction} className="hidden sm:block">
-              <button className="px-2 text-sm text-soft transition-colors hover:text-text">Sign out</button>
-            </form>
-          ) : null}
           <Link
             href={POST_HREF}
             onClick={() => setOpen(false)}
@@ -107,11 +100,6 @@ export function Header() {
                 </li>
               ))}
             </ul>
-            {signedIn && process.env.NODE_ENV !== "production" ? (
-              <form action={testSignOutAction} className="mt-2">
-                <button className="font-display block py-3 text-3xl font-semibold tracking-tight text-soft">Sign out</button>
-              </form>
-            ) : null}
           </m.div>
         ) : null}
       </AnimatePresence>
