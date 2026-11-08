@@ -47,6 +47,7 @@ lawyer signs them off.
 7. **Mediation Act, 2023**: confirm Step 3 works as a pre-litigation step.
 8. **Women-only and men-only listings**: confirm they are lawful and how to describe them.
 9. **Police tenant verification**: confirm what applies to landlords in Gujarat and say so in the Terms.
+10. **Grievance Officer's name.** The officer is shown as "Ayush", a first name only (`NEXT_PUBLIC_GRIEVANCE_OFFICER`). Ask whether the IT Rules require the full name of a real, identifiable person, and if so, replace it with the full name (a short form such as "Ayush Solanki (SOA)" is fine).
 
 ## Where the facts about you come from
 
