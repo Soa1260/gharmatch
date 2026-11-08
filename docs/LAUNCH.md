@@ -2,7 +2,8 @@
 
 ## Legal and policy (blockers)
 - [ ] A lawyer reads `docs/LEGAL.md` and reviews `/privacy` and `/terms`, then remove the `draft` banner from both pages
-- [ ] Set `NEXT_PUBLIC_OPERATOR_NAME`, `NEXT_PUBLIC_GRIEVANCE_OFFICER`, `NEXT_PUBLIC_GRIEVANCE_EMAIL` and `NEXT_PUBLIC_OPERATOR_ADDRESS` as plain variables in Vercel. The pages show "[to be filled before launch]" until you do
+- [ ] Set `NEXT_PUBLIC_GRIEVANCE_OFFICER` and `NEXT_PUBLIC_GRIEVANCE_EMAIL` as plain variables in Vercel. The pages show "[to be filled before launch]" until you do
+- [ ] Add a `LICENSE` file to the repository (the Terms call the project open source), or change that wording
 - [ ] Be able to meet the response times the pages promise (24 hours to acknowledge, 15 days to resolve). Someone must read the grievance inbox daily
 - [ ] When either document changes, bump `POLICY_VERSION` and `POLICY_UPDATED` in `src/lib/legal.ts`. Everyone is then asked to agree again
 - [ ] Decide on the legal entity operating the service. The terms name the operator and set Ahmedabad / Gandhinagar courts
