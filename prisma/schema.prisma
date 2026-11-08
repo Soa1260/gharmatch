@@ -1,0 +1,357 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum City {
+  AHMEDABAD
+  GANDHINAGAR
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+  DELETED
+}
+
+enum ListingStatus {
+  ACTIVE
+  PAUSED
+  EXPIRED
+  DELETED
+}
+
+enum RequirementStatus {
+  ACTIVE
+  PAUSED
+  DELETED
+}
+
+enum InterestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+}
+
+enum InterestOrigin {
+  TENANT
+  LANDLORD
+}
+
+enum ReportTarget {
+  LISTING
+  REQUIREMENT
+  USER
+}
+
+enum ReportStatus {
+  OPEN
+  UNDER_REVIEW
+  ACTIONED
+  DISMISSED
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  phone         String?
+  isLandlord    Boolean    @default(false)
+  isTenant      Boolean    @default(false)
+  onboarded     Boolean    @default(false)
+  deletedAt     DateTime?
+  trustedContactName  String?
+  trustedContactPhone String?
+  identityCheckedAt   DateTime?
+  identityMethod      String?
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+
+  accounts     Account[]
+  listings     Listing[]
+  requirements Requirement[]
+  reports      Report[]      @relation("Reporter")
+  visits       Visit[]
+  appeals      Appeal[]
+  blocking     Block[]       @relation("Blocker")
+  blockedBy    Block[]       @relation("Blocked")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Listing {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  ownerId          String
+  title            String
+  city             City
+  area             String
+  rent             Int
+  deposit          Int
+  bhk              Int
+  furnishing       String
+  availableFrom    DateTime
+  description      String
+  dietPolicy       String
+  tenantTypes      String[]
+  pets             String
+  smoking          String
+  alcohol          String
+  visitors         String
+  quietHours       String?
+  minLeaseMonths   Int
+  noticeDays       Int
+  parking          String
+  wfhAllowed       Boolean
+  maxOccupants     Int
+  status           ListingStatus @default(ACTIVE)
+  flagged          Boolean       @default(false)
+  lastConfirmedAt  DateTime      @default(now())
+  expiresAt        DateTime
+  genderPolicy     String        @default("ANY")
+  lat              Float?
+  lng              Float?
+  addressLine      String?
+  locationStatus   String        @default("NOT_PROVIDED")
+  locationCheckedAt DateTime?
+  cctvLocations    String?
+  cctvAccess       String?
+  occupancyNote    String?
+  ownerLivesOnSite Boolean       @default(false)
+  keyHolders       String        @default("TENANT_ONLY")
+  ownerAccess      String        @default("WITH_NOTICE")
+  noticeHours      Int           @default(24)
+  ownershipReviewedAt DateTime?
+  ownershipDocType String?
+  securityFeatures String[]
+  boostedUntil     DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  owner     User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  photos    ListingPhoto[]
+  interests Interest[]
+  inspections Inspection[]
+  visits    Visit[]
+
+  @@index([status, city, area, rent])
+  @@index([ownerId, status])
+  @@index([status, expiresAt])
+}
+
+model ListingPhoto {
+  id          String   @id @default(cuid())
+  listingId   String
+  objectKey   String   @unique
+  contentType String
+  bytes       Int
+  position    Int
+  createdAt   DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, position])
+}
+
+model Requirement {
+  id             String            @id @default(cuid())
+  tenantId       String
+  city           City
+  areas          String[]
+  budgetMin      Int
+  budgetMax      Int
+  moveInDate     DateTime
+  tenantType     String
+  diet           String
+  pets           String
+  smoking        String
+  alcohol        String
+  durationMonths Int
+  occupants      Int
+  occupantGroup  String            @default("MEN")
+  needsSecurity  Boolean           @default(false)
+  acceptsInvites Boolean           @default(true)
+  intro          String
+  status         RequirementStatus @default(ACTIVE)
+  flagged        Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  tenant    User       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  interests Interest[]
+
+  @@index([status, city, createdAt])
+  @@index([tenantId, status])
+}
+
+model Interest {
+  id            String         @id @default(cuid())
+  listingId     String
+  requirementId String
+  origin        InterestOrigin
+  message       String
+  status        InterestStatus @default(PENDING)
+  respondedAt   DateTime?
+  createdAt     DateTime       @default(now())
+
+  listing     Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, requirementId])
+  @@index([listingId, status])
+  @@index([requirementId, status])
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  targetType ReportTarget
+  targetId   String
+  reason     String
+  category   String       @default("OTHER")
+  urgent     Boolean      @default(false)
+  severity   String       @default("MEDIUM")
+  incidentAt DateTime?
+  resolutionNote String?
+  resolvedAt DateTime?
+  snapshot   String?
+  appeals    Appeal[]
+  details    String?
+  status     ReportStatus @default(OPEN)
+  createdAt  DateTime     @default(now())
+
+  reporter User @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@unique([reporterId, targetType, targetId])
+  @@index([status, createdAt])
+}
+
+model Event {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  @@index([name, createdAt])
+}
+
+model RateLimit {
+  key         String
+  windowStart DateTime
+  count       Int      @default(0)
+
+  @@id([key, windowStart])
+  @@index([windowStart])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  blocker User @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockedId])
+}
+
+model Inspection {
+  id            String   @id @default(cuid())
+  listingId     String
+  inspectorId   String
+  inspectedAt   DateTime
+  verifiedItems String[]
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, inspectedAt])
+}
+
+model Visit {
+  id                 String    @id @default(cuid())
+  interestId         String
+  listingId          String
+  tenantId           String
+  scheduledAt        DateTime
+  status             String    @default("REQUESTED")
+  representativeName String?
+  representativeRole String?
+  companion          Boolean   @default(false)
+  note               String?
+  checkedInAt        DateTime?
+  checkedOutAt       DateTime?
+  createdAt          DateTime  @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tenant  User    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, scheduledAt])
+  @@index([listingId, scheduledAt])
+  @@index([interestId])
+}
+
+model Appeal {
+  id          String    @id @default(cuid())
+  reportId    String
+  appellantId String
+  message     String
+  status      String    @default("OPEN")
+  decisionNote String?
+  decidedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  report    Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  appellant User   @relation(fields: [appellantId], references: [id], onDelete: Cascade)
+
+  @@unique([reportId, appellantId])
+  @@index([status, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  action     String
+  targetType String
+  targetId   String
+  detail     String?
+  createdAt  DateTime @default(now())
+
+  @@index([targetType, targetId])
+  @@index([createdAt])
+}
