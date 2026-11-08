@@ -7,8 +7,9 @@ import { AppError } from "./errors";
 
 const HOUR = 3_600_000;
 const MAX_OPEN_PER_INTEREST = 3;
-const CHECK_IN_EARLY_MS = 2 * HOUR;
-const CHECK_IN_LATE_MS = 6 * HOUR;
+/** Check-in opens this long before the visit time and closes CHECK_IN_LATE_MS after it. */
+export const CHECK_IN_EARLY_MS = 2 * HOUR;
+export const CHECK_IN_LATE_MS = 6 * HOUR;
 
 export const REPRESENTATIVE_ROLES = ["OWNER", "FAMILY_MEMBER", "AGENT", "CARETAKER"] as const;
 
@@ -87,7 +88,7 @@ export async function checkIn(db: Db, actor: Actor | null, visitId: string) {
   if (v.tenantId !== user.id) throw new AppError("FORBIDDEN", "Only the visitor checks in.");
   const t = v.scheduledAt.getTime();
   const now = Date.now();
-  if (now < t - CHECK_IN_EARLY_MS || now > t + CHECK_IN_LATE_MS) throw new AppError("INVALID", "Check in close to the visit time.");
+  if (now < t - CHECK_IN_EARLY_MS || now > t + CHECK_IN_LATE_MS) throw new AppError("INVALID", "Check-in opens 2 hours before the visit time and closes 6 hours after it.");
   const res = await db.visit.updateMany({ where: { id: visitId, status: "CONFIRMED" }, data: { status: "CHECKED_IN", checkedInAt: new Date() } });
   if (res.count === 0) throw new AppError("CONFLICT", "This visit cannot be checked in.");
 }

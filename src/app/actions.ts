@@ -267,19 +267,38 @@ export async function confirmVisitAction(_: FormState, f: FormData): Promise<For
   return { ok: "Visit confirmed." };
 }
 
-export async function cancelVisitAction(f: FormData) {
-  await cancelVisit(getDb(), await currentActor(), str(f, "visitId")).catch(() => undefined);
+/**
+ * Visit buttons return the reason when the service refuses (for example, checking in too early), so the
+ * person sees why nothing happened instead of a button that appears to do nothing.
+ */
+export async function cancelVisitAction(_: FormState, f: FormData): Promise<FormState> {
+  try {
+    await cancelVisit(getDb(), await currentActor(), str(f, "visitId"));
+  } catch (e) {
+    return toState(e);
+  }
   revalidatePath("/dashboard");
+  return { ok: "Visit cancelled." };
 }
 
-export async function checkInAction(f: FormData) {
-  await checkIn(getDb(), await currentActor(), str(f, "visitId")).catch(() => undefined);
+export async function checkInAction(_: FormState, f: FormData): Promise<FormState> {
+  try {
+    await checkIn(getDb(), await currentActor(), str(f, "visitId"));
+  } catch (e) {
+    return toState(e);
+  }
   revalidatePath("/dashboard");
+  return { ok: "Checked in." };
 }
 
-export async function checkOutAction(f: FormData) {
-  await checkOut(getDb(), await currentActor(), str(f, "visitId")).catch(() => undefined);
+export async function checkOutAction(_: FormState, f: FormData): Promise<FormState> {
+  try {
+    await checkOut(getDb(), await currentActor(), str(f, "visitId"));
+  } catch (e) {
+    return toState(e);
+  }
   revalidatePath("/dashboard");
+  return { ok: "Checked out. Glad you are safe." };
 }
 
 export async function fileAppealAction(_: FormState, f: FormData): Promise<FormState> {

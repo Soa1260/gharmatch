@@ -4,6 +4,7 @@ import {
   blockAction, cancelVisitAction, checkInAction, checkOutAction, listingStatusAction, requirementStatusAction, respondAction, withdrawAction,
 } from "@/app/actions";
 import { AgreedRulesCard } from "@/components/dashboard/AgreedRulesCard";
+import { VisitActionButton } from "@/components/dashboard/VisitActionButton";
 import { AppealForm, TrustedShare, VisitConfirm, VisitPlanner } from "@/components/dashboard/VisitForms";
 import { EmergencyStrip } from "@/components/site/EmergencyStrip";
 import { PAGE_SIZE } from "@/lib/domain";
@@ -15,7 +16,7 @@ import { listAppealable } from "@/server/incidents";
 import { getAgreedRules, listMyInterests } from "@/server/interests";
 import type { AgreedRules } from "@/server/matchSnapshot";
 import { listMine } from "@/server/listings";
-import { listVisits } from "@/server/visits";
+import { CHECK_IN_EARLY_MS, listVisits } from "@/server/visits";
 import { requireOnboarded } from "@/server/session";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
@@ -23,6 +24,7 @@ export const dynamic = "force-dynamic";
 
 const DAY = 86_400_000;
 const daysUntil = (d: Date) => Math.ceil((d.getTime() - Date.now()) / DAY);
+const checkInNotYetOpen = (visitAt: Date) => Date.now() < visitAt.getTime() - CHECK_IN_EARLY_MS;
 
 function Btn({ children, tone = "ghost" }: { children: React.ReactNode; tone?: "solid" | "ghost" | "danger" }) {
   const cls = tone === "solid" ? "bg-text text-void" : tone === "danger" ? "border border-danger/40 text-danger" : "border border-line-strong text-text hover:bg-raised";
@@ -175,10 +177,10 @@ export default async function Dashboard() {
                 <StatusTag status={v.status} />
               </div>
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                {v.asTenant && v.status === "CONFIRMED" ? <form action={checkInAction}><input type="hidden" name="visitId" value={v.id} /><Btn tone="solid">I have arrived</Btn></form> : null}
+                {v.asTenant && v.status === "CONFIRMED" ? <VisitActionButton action={checkInAction} visitId={v.id} tone="solid">I have arrived</VisitActionButton> : null}
                 {v.asTenant && v.status === "CHECKED_IN" ? (
                   <>
-                    <form action={checkOutAction}><input type="hidden" name="visitId" value={v.id} /><Btn tone="solid">I have left safely</Btn></form>
+                    <VisitActionButton action={checkOutAction} visitId={v.id} tone="solid">I have left safely</VisitActionButton>
                     <TrustedShare label="Message" text={`I have reached the visit for ${v.listing.title} in ${v.listing.area}. I will message again when I leave.`} />
                   </>
                 ) : null}
@@ -186,8 +188,11 @@ export default async function Dashboard() {
                   <TrustedShare label="Share plan with" text={`I am visiting a home in ${v.listing.area} on ${fmtWhen(v.scheduledAt)}${v.representativeName ? `, meeting ${v.representativeName}` : ""}. Please call me if you do not hear from me within an hour.`} />
                 ) : null}
                 {v.status === "CONFIRMED" || v.status === "REQUESTED" ? <a href={`/api/visits/${v.id}/ics`} className="inline-flex h-9 items-center rounded-full border border-line-strong px-4 text-sm hover:bg-raised">Add to calendar</a> : null}
-                {v.status === "CONFIRMED" || v.status === "REQUESTED" ? <form action={cancelVisitAction}><input type="hidden" name="visitId" value={v.id} /><Btn>Cancel</Btn></form> : null}
+                {v.status === "CONFIRMED" || v.status === "REQUESTED" ? <VisitActionButton action={cancelVisitAction} visitId={v.id}>Cancel</VisitActionButton> : null}
               </div>
+              {v.asTenant && v.status === "CONFIRMED" && checkInNotYetOpen(v.scheduledAt) ? (
+                <p className="mt-3 text-xs text-faint">“I have arrived” opens at {fmtWhen(new Date(v.scheduledAt.getTime() - CHECK_IN_EARLY_MS))}, two hours before the visit.</p>
+              ) : null}
               {!v.asTenant && v.status === "REQUESTED" ? <VisitConfirm visitId={v.id} /> : null}
               {v.asTenant && v.status === "CHECKED_IN" ? <p className="mt-3 text-xs text-faint">If you feel unsafe, leave and call 112. These messages are not an emergency or police service.</p> : null}
             </li>
