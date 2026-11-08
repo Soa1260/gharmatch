@@ -69,7 +69,15 @@ describe("visit workflow", () => {
     const a = await accepted();
     const v = await proposeVisit(db, a.tenant, a.interest.id, { scheduledAt: soon(48) });
     await confirmVisit(db, a.landlord, v.id, { representativeName: "Meera Joshi", representativeRole: "OWNER" });
-    await expect(checkIn(db, a.tenant, v.id)).rejects.toMatchObject({ code: "INVALID" });
+    // The person is told when check-in opens, not left with a button that seems to do nothing.
+    await expect(checkIn(db, a.tenant, v.id)).rejects.toMatchObject({ code: "INVALID", message: expect.stringContaining("2 hours before") });
+  });
+
+  it("lets the visitor check in once the window opens, two hours before", async () => {
+    const a = await accepted();
+    const v = await proposeVisit(db, a.tenant, a.interest.id, { scheduledAt: soon(1.5) });
+    await confirmVisit(db, a.landlord, v.id, { representativeName: "Meera Joshi", representativeRole: "OWNER" });
+    await expect(checkIn(db, a.tenant, v.id)).resolves.toBeUndefined();
   });
 
   it("cancels waiting and confirmed visits when the landlord deletes the home", async () => {
