@@ -16,13 +16,22 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const declared = Number(req.headers.get("content-length") ?? 0);
   if (declared > MAX_PHOTO_BYTES * 3) return NextResponse.json({ error: "File too large." }, { status: 413 });
 
+  // Know who is calling before reading a single byte of their upload. The service checks again and owns the real rules.
+  const actor = await currentActor();
+  if (!actor) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
+
   try {
-    const form = await req.formData();
+    let form: FormData;
+    try {
+      form = await req.formData();
+    } catch {
+      throw new AppError("INVALID", "That was not a photo upload.");
+    }
     const file = form.get("photo");
     if (!(file instanceof File)) throw new AppError("INVALID", "No photo received.");
     const bytes = new Uint8Array(await file.arrayBuffer());
     const db = getDb();
-    const row = await addPhoto(db, getStorage(), new PostgresRateLimiter(db), await currentActor(), id, bytes);
+    const row = await addPhoto(db, getStorage(), new PostgresRateLimiter(db), actor, id, bytes);
     revalidatePath("/listings");
     return NextResponse.json({ id: row.id, url: getStorage()?.urlFor(row.objectKey) ?? null });
   } catch (e) {
