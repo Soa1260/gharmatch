@@ -14,7 +14,7 @@ export function InviteForm({ requirementId, listings }: { requirementId: string;
       <form action={action} className="mt-4 space-y-4">
         <input type="hidden" name="requirementId" value={requirementId} />
         <Select name="listingId" label="Which home" options={listings.map((l) => ({ value: l.id, label: l.title }))} />
-        <TextArea name="message" label="Your note" hint="No phone numbers, emails or links. They see your home, not your contact, until they accept." maxLength={400} required />
+        <TextArea name="message" label="Your note" hint="No phone numbers, emails or links. They see your home, not your contact, until they accept." maxLength={400} required error={state.fieldErrors?.message} />
         <FormMessage error={state.error} ok={state.ok} />
         <SubmitButton>Send invitation</SubmitButton>
       </form>
