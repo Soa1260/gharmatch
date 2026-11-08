@@ -224,7 +224,7 @@ export async function listMyInterests(db: Db, actor: Actor | null, box: "receive
     where: { AND: [mine, side] },
     select: {
       id: true, origin: true, status: true, message: true, createdAt: true,
-      listing: { select: { id: true, slug: true, title: true, area: true, ownerId: true } },
+      listing: { select: { id: true, slug: true, title: true, area: true, ownerId: true, status: true, flagged: true } },
       requirement: {
         select: {
           id: true, occupantGroup: true, city: true, areas: true, budgetMin: true, budgetMax: true, moveInDate: true,
@@ -239,6 +239,8 @@ export async function listMyInterests(db: Db, actor: Actor | null, box: "receive
   return rows.map((r) => ({
     id: r.id, origin: r.origin, status: r.status, message: r.message, createdAt: r.createdAt,
     listing: { id: r.listing.id, slug: r.listing.slug, title: r.listing.title, area: r.listing.area },
+    /** Whether the home can still take visits: live, and not on a safety hold. */
+    listingOpen: r.listing.status === "ACTIVE" && !r.listing.flagged,
     tenant: toBoardView({
       id: r.requirement.id, group: r.requirement.occupantGroup as OccupantGroup, city: r.requirement.city,
       areas: r.requirement.areas, budgetMin: r.requirement.budgetMin, budgetMax: r.requirement.budgetMax,

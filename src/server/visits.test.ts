@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { visitIcs } from "@/lib/ics";
 import { createTestDb, makeUser, validListing, validRequirement } from "@/test/testDb";
+import { getLocationForInterest } from "./contacts";
 import type { Db } from "./db";
 import { respondToInterest, sendInterest } from "./interests";
 import { createListing, setListingStatus } from "./listings";
@@ -95,6 +96,26 @@ describe("visit workflow", () => {
     const kept = await proposeVisit(db, b.tenant, b.interest.id, { scheduledAt: soon(24) });
     await setListingStatus(db, b.landlord, b.listing.id, "PAUSED");
     expect((await listVisits(db, b.tenant)).find((v) => v.id === kept.id)?.status).toBe("REQUESTED");
+  });
+
+  it("takes no new visits for a home that is deleted, paused or on hold, and stops sharing a deleted home's address", async () => {
+    const a = await accepted();
+    await setListingStatus(db, a.landlord, a.listing.id, "DELETED");
+    await expect(proposeVisit(db, a.tenant, a.interest.id, { scheduledAt: soon(24) })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(getLocationForInterest(db, a.tenant, a.interest.id)).rejects.toMatchObject({ code: "NOT_FOUND" });
+
+    const b = await accepted();
+    await setListingStatus(db, b.landlord, b.listing.id, "PAUSED");
+    await expect(proposeVisit(db, b.tenant, b.interest.id, { scheduledAt: soon(24) })).rejects.toMatchObject({ code: "FORBIDDEN" });
+
+    const c = await accepted();
+    await db.listing.update({ where: { id: c.listing.id }, data: { flagged: true } });
+    await expect(proposeVisit(db, c.tenant, c.interest.id, { scheduledAt: soon(24) })).rejects.toMatchObject({ code: "FORBIDDEN" });
+
+    // A live home still works, and still shares its address after acceptance.
+    const d = await accepted();
+    await expect(proposeVisit(db, d.tenant, d.interest.id, { scheduledAt: soon(24) })).resolves.toBeDefined();
+    expect((await getLocationForInterest(db, d.tenant, d.interest.id)).addressLine).toContain("Sunrise Heights");
   });
 
   it("lets either side cancel, and nobody else touch it", async () => {

@@ -27,7 +27,7 @@ const confirmSchema = z.object({
 async function partyOf(db: Db, userId: string, interestId: string) {
   const i = await db.interest.findUnique({
     where: { id: interestId },
-    select: { id: true, status: true, listingId: true, listing: { select: { ownerId: true } }, requirement: { select: { tenantId: true } } },
+    select: { id: true, status: true, listingId: true, listing: { select: { ownerId: true, status: true, flagged: true } }, requirement: { select: { tenantId: true } } },
   });
   const isParty = i && (i.listing.ownerId === userId || i.requirement.tenantId === userId);
   if (!i || !isParty) throw new AppError("NOT_FOUND", "Not found.");
@@ -50,6 +50,8 @@ export async function proposeVisit(db: Db, actor: Actor | null, interestId: stri
   const i = await partyOf(db, user.id, interestId);
   if (i.status !== "ACCEPTED") throw new AppError("FORBIDDEN", "Visits can be planned after the interest is accepted.");
   if (i.tenantId !== user.id) throw new AppError("FORBIDDEN", "The person looking for a home proposes the visit.");
+  // A home that was deleted, paused or put on hold cannot take new visits.
+  if (i.listing.status !== "ACTIVE" || i.listing.flagged) throw new AppError("FORBIDDEN", "This home is not available for visits right now.");
   const now = Date.now();
   if (input.scheduledAt.getTime() < now + HOUR) throw new AppError("INVALID", "Choose a time at least an hour from now.");
   if (input.scheduledAt.getTime() > now + 60 * 86_400_000) throw new AppError("INVALID", "Choose a time within the next 60 days.");

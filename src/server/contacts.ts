@@ -57,12 +57,14 @@ export async function getLocationForInterest(db: Db, actor: Actor | null, intere
     where: { id: interestId },
     select: {
       status: true,
-      listing: { select: { ownerId: true, addressLine: true, lat: true, lng: true } },
+      listing: { select: { ownerId: true, addressLine: true, lat: true, lng: true, status: true } },
       requirement: { select: { tenantId: true } },
     },
   });
   if (!interest) throw new AppError("NOT_FOUND", "Not found.");
   const { ownerId, addressLine, lat, lng } = interest.listing;
+  // Once the landlord removes the home, its exact address is no longer shared.
+  if (interest.listing.status === "DELETED") throw new AppError("NOT_FOUND", "Not found.");
   if (user.id !== ownerId && user.id !== interest.requirement.tenantId) throw new AppError("NOT_FOUND", "Not found.");
   if (interest.status !== "ACCEPTED") throw new AppError("FORBIDDEN", "The exact address is shared after the interest is accepted.");
   const otherId = user.id === ownerId ? interest.requirement.tenantId : ownerId;
