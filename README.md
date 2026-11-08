@@ -68,3 +68,7 @@ All are validated in `src/lib/env.ts`. See `.env.example`.
 ## Docs
 
 `docs/INCIDENTS.md` response procedures · `docs/VERIFICATION.md` checks and inspections · `docs/SAFETY.md` what safety is built, what is not, and the staffing it needs · `docs/QA.md` manual checklist · `docs/LAUNCH.md` launch checklist · `docs/SEEDING.md` cold start · `docs/REDDIT.md` posts · `docs/VALIDATION.md` 30-day numbers · `docs/RISKS.md` limitations and risks.
+
+## Licence
+
+Gharmatch is free software under the **GNU Affero General Public License v3** (`LICENSE`). You may use, study, change and share it. If you run a modified version as a service that other people use over a network, the AGPL requires you to offer them the source of your version under the same licence. The site footer links to this repository for that reason. Copyright the Gharmatch contributors.

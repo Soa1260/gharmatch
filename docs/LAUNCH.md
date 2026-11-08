@@ -3,7 +3,8 @@
 ## Legal and policy (blockers)
 - [ ] A lawyer reads `docs/LEGAL.md` and reviews `/privacy` and `/terms`, then remove the `draft` banner from both pages
 - [ ] Set `NEXT_PUBLIC_GRIEVANCE_OFFICER` and `NEXT_PUBLIC_GRIEVANCE_EMAIL` as plain variables in Vercel. The pages show "[to be filled before launch]" until you do
-- [ ] Add a `LICENSE` file to the repository (the Terms call the project open source), or change that wording
+- [x] `LICENSE` added: GNU AGPL v3. The footer links to the source, which the AGPL requires for a network service. Keep the repository public and current with what is deployed
+- [ ] Ask your lawyer how the AGPL fits your plan to charge for features later (it allows selling, but any modified hosted version must publish its source)
 - [ ] Be able to meet the response times the pages promise (24 hours to acknowledge, 15 days to resolve). Someone must read the grievance inbox daily
 - [ ] When either document changes, bump `POLICY_VERSION` and `POLICY_UPDATED` in `src/lib/legal.ts`. Everyone is then asked to agree again
 - [ ] Decide on the legal entity operating the service. The terms name the operator and set Ahmedabad / Gandhinagar courts
