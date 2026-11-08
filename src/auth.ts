@@ -3,12 +3,13 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaClient } from "@/generated/prisma/client";
+import { databaseUrl } from "@/lib/dbUrl";
 
 /** The Auth.js adapter needs email on user rows, so it gets a client without the default omit. */
 const globalForAuth = globalThis as unknown as { authDb?: PrismaClient };
 function authDb(): PrismaClient {
   if (!globalForAuth.authDb) {
-    globalForAuth.authDb = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL, max: 2 }) });
+    globalForAuth.authDb = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseUrl(), max: 2 }) });
   }
   return globalForAuth.authDb;
 }

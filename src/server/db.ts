@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { databaseUrl } from "@/lib/dbUrl";
 
 export type Db = PrismaClient;
 type Adapter = ConstructorParameters<typeof PrismaClient>[0] extends infer O
@@ -17,7 +18,7 @@ const globalForDb = globalThis as unknown as { db?: PrismaClient };
 
 export function getDb(): PrismaClient {
   if (!globalForDb.db) {
-    globalForDb.db = createClient(new PrismaPg({ connectionString: process.env.DATABASE_URL, max: 3 }));
+    globalForDb.db = createClient(new PrismaPg({ connectionString: databaseUrl(), max: 3 }));
   }
   return globalForDb.db;
 }
