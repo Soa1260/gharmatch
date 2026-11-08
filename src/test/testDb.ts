@@ -1,14 +1,20 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { PrismaPGlite } from "pglite-prisma-adapter";
 import { createClient, type Db } from "@/server/db";
 
-const migration = readFileSync(path.resolve(process.cwd(), "prisma/migrations/0001_init/migration.sql"), "utf8");
+/** Every migration, in order, so tests run against the same schema as production. */
+const dir = path.resolve(process.cwd(), "prisma/migrations");
+const migrations = readdirSync(dir, { withFileTypes: true })
+  .filter((d) => d.isDirectory())
+  .map((d) => d.name)
+  .sort()
+  .map((name) => readFileSync(path.join(dir, name, "migration.sql"), "utf8"));
 
 export async function createTestDb(): Promise<{ db: Db; close: () => Promise<void> }> {
   const pg = new PGlite();
-  await pg.exec(migration);
+  for (const sql of migrations) await pg.exec(sql);
   const db = createClient(new PrismaPGlite(pg));
   return {
     db,

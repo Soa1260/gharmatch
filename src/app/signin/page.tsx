@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { signIn } from "@/auth";
 
 export const metadata: Metadata = { title: "Sign in", robots: { index: false } };
@@ -32,7 +33,7 @@ export default async function SignIn({ searchParams }: { searchParams: Promise<{
           <button className="h-12 w-full rounded-full bg-text text-[15px] font-medium text-void transition-colors hover:bg-white">Continue with Google</button>
         </form>
         <p className="text-xs leading-relaxed text-faint">
-          By continuing you agree to the Terms and Privacy Policy. We only keep what the product needs.
+          By continuing, I confirm I am 18 or older and agree to the <Link href="/terms" className="underline underline-offset-4">Terms of Use</Link> (including the mediative dispute framework) and the <Link href="/privacy" className="underline underline-offset-4">Privacy Policy</Link>. We only keep what the product needs.
         </p>
       </div>
     </main>

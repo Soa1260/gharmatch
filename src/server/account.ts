@@ -1,4 +1,5 @@
 import { AUTO_PAUSE_REPORTERS, DISMISSED_REPORT_LIMIT, REPORT_SEVERITY } from "@/lib/domain";
+import { POLICY_VERSION } from "@/lib/legal";
 import { profileSchema, reportSchema, trustedContactSchema } from "@/lib/schemas";
 import { requireActiveUser, type Actor } from "./actor";
 import type { Db } from "./db";
@@ -9,9 +10,22 @@ import { enforce, type RateLimiter } from "./rateLimit";
 export async function saveProfile(db: Db, actor: Actor | null, raw: unknown) {
   const user = await requireActiveUser(db, actor);
   const input = profileSchema.parse(raw);
+  // Agreement is recorded per version. Someone who already accepted this version is not asked again.
+  const before = await db.user.findUnique({ where: { id: user.id }, select: { termsVersion: true } });
+  const accepted = before?.termsVersion === POLICY_VERSION;
+  if (!accepted && !input.acceptTerms) {
+    throw new AppError("INVALID", "Please confirm you are 18 or older and agree to the Terms of Use and Privacy Policy to continue.");
+  }
   await db.user.update({
     where: { id: user.id },
-    data: { name: input.name, phone: input.phone ?? null, isLandlord: input.isLandlord, isTenant: input.isTenant, onboarded: true },
+    data: {
+      name: input.name,
+      phone: input.phone ?? null,
+      isLandlord: input.isLandlord,
+      isTenant: input.isTenant,
+      onboarded: true,
+      ...(accepted ? {} : { termsAcceptedAt: new Date(), termsVersion: POLICY_VERSION }),
+    },
   });
 }
 

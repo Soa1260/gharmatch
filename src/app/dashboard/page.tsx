@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   blockAction, cancelVisitAction, checkInAction, checkOutAction, listingStatusAction, requirementStatusAction, respondAction, withdrawAction,
 } from "@/app/actions";
+import { AgreedRulesCard } from "@/components/dashboard/AgreedRulesCard";
 import { AppealForm, TrustedShare, VisitConfirm, VisitPlanner } from "@/components/dashboard/VisitForms";
 import { EmergencyStrip } from "@/components/site/EmergencyStrip";
 import { PAGE_SIZE } from "@/lib/domain";
@@ -11,7 +12,8 @@ import { mapsOpenUrl } from "@/lib/location";
 import { getContactsForInterest, getLocationForInterest, type Contact, type ExactLocation } from "@/server/contacts";
 import { getDb } from "@/server/db";
 import { listAppealable } from "@/server/incidents";
-import { listMyInterests } from "@/server/interests";
+import { getAgreedRules, listMyInterests } from "@/server/interests";
+import type { AgreedRules } from "@/server/matchSnapshot";
 import { listMine } from "@/server/listings";
 import { listVisits } from "@/server/visits";
 import { requireOnboarded } from "@/server/session";
@@ -69,6 +71,15 @@ export default async function Dashboard() {
       .map(async (i) => {
         const loc = await getLocationForInterest(db, actor, i.id).catch(() => null);
         if (loc) locations.set(i.id, loc);
+      }),
+  );
+  const agreedRules = new Map<string, AgreedRules>();
+  await Promise.all(
+    allInterests
+      .filter((i) => i.status === "ACCEPTED")
+      .map(async (i) => {
+        const a = await getAgreedRules(db, actor, i.id).catch(() => null);
+        if (a) agreedRules.set(i.id, a);
       }),
   );
   const [visits, appealable] = await Promise.all([listVisits(db, actor), listAppealable(db, actor)]);
@@ -139,6 +150,7 @@ export default async function Dashboard() {
                   </a>
                 </div>
               ) : null}
+              {agreedRules.get(id) ? <AgreedRulesCard agreed={agreedRules.get(id)!} /> : null}
               {allInterests.find((x) => x.id === id)?.viewerIsTenant ? <div className="w-full"><VisitPlanner interestId={id} /></div> : null}
             </li>
           ))}

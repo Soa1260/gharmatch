@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 export function Footer() {
-  const grievance = process.env.NEXT_PUBLIC_GRIEVANCE_EMAIL ?? "grievance@example.com";
+  // No placeholder address: until a real one is set, the footer points to the Terms, where the officer is named.
+  const grievance = process.env.NEXT_PUBLIC_GRIEVANCE_EMAIL?.trim();
   return (
     <footer className="border-t border-line">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
@@ -21,7 +22,13 @@ export function Footer() {
         <ul className="space-y-0 text-sm text-soft">
           <li><Link href="/privacy" className="inline-block py-2 hover:text-text">Privacy</Link></li>
           <li><Link href="/terms" className="inline-block py-2 hover:text-text">Terms</Link></li>
-          <li><a href={`mailto:${grievance}`} className="inline-block py-2 hover:text-text">Grievance: {grievance}</a></li>
+          <li>
+            {grievance ? (
+              <a href={`mailto:${grievance}`} className="inline-block py-2 hover:text-text">Grievance: {grievance}</a>
+            ) : (
+              <Link href="/terms#grievance" className="inline-block py-2 hover:text-text">Grievance officer</Link>
+            )}
+          </li>
         </ul>
       </div>
     </footer>

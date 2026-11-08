@@ -3,7 +3,7 @@ import { profileSchema } from "@/lib/schemas";
 import { createTestDb, makeUser, validListing, validRequirement } from "@/test/testDb";
 import { getContactsForInterest } from "./contacts";
 import type { Db } from "./db";
-import { inviteTenant, listMyInterests, respondToInterest, sendInterest, withdrawInterest } from "./interests";
+import { getAgreedRules, inviteTenant, listMyInterests, respondToInterest, sendInterest, withdrawInterest } from "./interests";
 import { browseListings, createListing, getPublicListing, setListingStatus, updateListing } from "./listings";
 import { PostgresRateLimiter } from "./rateLimit";
 import { createRequirement, listBoard } from "./requirements";
@@ -168,6 +168,31 @@ describe("women's safety", () => {
     expect(profileSchema.safeParse({ ...base, isLandlord: true }).success).toBe(false);
     expect(profileSchema.safeParse({ ...base, isLandlord: true, phone: "9876543210" }).success).toBe(true);
     expect(profileSchema.safeParse({ name: "Asha", isLandlord: false, isTenant: true }).success).toBe(true);
+  });
+
+  it("saves the house rules at acceptance, so a later edit cannot rewrite what was agreed", async () => {
+    const { landlord, tenant, requirement, listing } = await setup();
+    const interest = await sendInterest(db, limiter, tenant, listing.id, requirement.id, { message: "This home suits how I live.", acknowledgeConflicts: false });
+
+    // Not saved, and not readable, before the landlord accepts.
+    expect(await getAgreedRules(db, tenant, interest.id)).toBeNull();
+
+    await respondToInterest(db, landlord, interest.id, "ACCEPT");
+    // The landlord then quietly changes a rule.
+    await updateListing(db, landlord, listing.id, { ...validListing, visitors: "FREE", noticeHours: 12 });
+
+    for (const party of [landlord, tenant]) {
+      const agreed = await getAgreedRules(db, party, interest.id);
+      expect(agreed?.rules.visitors).toBe("DAYTIME_ONLY");
+      expect(agreed?.disclosures.noticeHours).toBe(24);
+      expect(agreed?.disclosures.cctvLocations).toBe("Main gate and parking");
+      expect(agreed?.firstMessage).toBe("This home suits how I live.");
+      // Rules only: no address, no coordinates and no contact details.
+      expect(JSON.stringify(agreed)).not.toMatch(/Sunrise Heights|9876543210|lat|lng|@/);
+    }
+
+    const stranger = await makeUser(db, { isTenant: true });
+    await expect(getAgreedRules(db, stranger, interest.id)).rejects.toMatchObject({ code: "NOT_FOUND" });
   });
 
   it("lets a landlord with a phone invite, and only the tenant accept to reveal contacts", async () => {

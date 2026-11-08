@@ -102,6 +102,7 @@ export async function saveProfileAction(_: FormState, f: FormData): Promise<Form
       phone: str(f, "phone") || undefined,
       isLandlord: list(f, "roles").includes("landlord"),
       isTenant: list(f, "roles").includes("tenant"),
+      acceptTerms: bool(f, "acceptTerms"),
     });
   } catch (e) {
     return toState(e);

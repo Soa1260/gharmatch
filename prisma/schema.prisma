@@ -71,6 +71,9 @@ model User {
   trustedContactPhone String?
   identityCheckedAt   DateTime?
   identityMethod      String?
+  /** When the person accepted the Terms and Privacy Policy, and which version. A new version asks again. */
+  termsAcceptedAt DateTime?
+  termsVersion    String?
   status        UserStatus @default(ACTIVE)
   createdAt     DateTime   @default(now())
 
@@ -225,6 +228,8 @@ model Interest {
   message       String
   status        InterestStatus @default(PENDING)
   respondedAt   DateTime?
+  /** The home's house rules and disclosures at the moment of acceptance (JSON). Both parties can read it if there is a misunderstanding later. */
+  matchSnapshot String?
   createdAt     DateTime       @default(now())
 
   listing     Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
