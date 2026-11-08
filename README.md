@@ -35,7 +35,7 @@ All are validated in `src/lib/env.ts`. See `.env.example`.
 | `ADMIN_EMAILS` | Comma-separated emails allowed into `/admin/reports` |
 | `CRON_SECRET` | Bearer token Vercel Cron sends to `/api/cron/daily` |
 | `NEXT_PUBLIC_SITE_URL` | Metadata, sitemap, and the domain named in the legal pages |
-| `NEXT_PUBLIC_OPERATOR_NAME`, `NEXT_PUBLIC_GRIEVANCE_OFFICER`, `NEXT_PUBLIC_GRIEVANCE_EMAIL`, `NEXT_PUBLIC_OPERATOR_ADDRESS` | Who the Terms and Privacy Policy name. Set as plain variables. See `docs/LEGAL.md` |
+| `NEXT_PUBLIC_GRIEVANCE_OFFICER`, `NEXT_PUBLIC_GRIEVANCE_EMAIL` | Who the Terms and Privacy Policy name (no street address is published). Set as plain variables. See `docs/LEGAL.md` |
 | `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY` | Optional free Google Maps Embed API key (restrict it to your site). Without it the keyless embed is used |
 | `R2_*` | Cloudflare R2 for photos. Create a bucket with a public URL (custom domain or r2.dev) and an API token limited to that bucket. Without these the site works and photo upload is switched off |
 

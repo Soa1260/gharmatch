@@ -1,21 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Page } from "@/components/site/Prose";
-import { operator, POLICY_UPDATED, TO_FILL } from "@/lib/legal";
+import { LOCATION, operator, POLICY_UPDATED, REPO_URL, TO_FILL } from "@/lib/legal";
 
 export const metadata: Metadata = { title: "Privacy policy" };
-
-const COLLECTED: Array<{ what: string; details: React.ReactNode; why: string }> = [
-  { what: "Sign-in data", details: "Your Google email address, name and profile picture, as Google gives them, and a Google account identifier. We do not keep Google’s access tokens.", why: "To sign you in and tell one account from another. Sign-in is with Google only." },
-  { what: "Mobile number", details: "Required to rent out a home. Optional for tenants. Stored privately.", why: "So that a person we can reach stands behind each listing. Shown to one other person only after an interest between you is accepted." },
-  { what: "Your agreement", details: "The date and version of the Terms and Privacy Policy you accepted.", why: "To record your consent, and to ask again if the documents change." },
-  { what: "Listings and searches", details: "House rules, preferences, photos (shrunk to WebP), a map pin, a private full address, interest messages, visit plans.", why: "To calculate fit, show listings without private details, and introduce people." },
-  { what: "Check records", details: <>The type and date of admin checks: identity checked, ownership documents reviewed, physically inspected. <strong>We do not keep copies of your Aadhaar, PAN, passport or property papers.</strong></>, why: "To show those indicators on listings." },
-  { what: "Trusted contact", details: "A name and number you choose to enter, optional.", why: "Only to fill in your own visit message. We never message, call or market to them." },
-  { what: "Reports and saved copies", details: "When a report is filed: a saved copy of the reported listing, search or account, account ids, and recent messages between the people involved.", why: "To investigate abuse, stop evidence being erased by editing or deleting, help neutral dispute facilitation, and meet legal requests." },
-  { what: "Agreed house rules", details: "When an interest is accepted, a saved copy of the home’s house rules and disclosures at that moment.", why: "So both sides can check what was agreed if there is a misunderstanding later." },
-  { what: "Usage counts", details: "Totals such as “interest sent”, with no name, email or account attached.", why: "To learn whether the product works, without tracking anyone." },
-];
 
 export default function Privacy() {
   const op = operator();
@@ -24,81 +12,79 @@ export default function Privacy() {
     <Page index="Legal" title="Privacy policy" draft missing={op.missing}>
       <p><strong>Last updated:</strong> {POLICY_UPDATED}</p>
       <p>
-        This policy explains how <strong>Gharmatch</strong> (“we”, “us” or “our”), operated by <strong>{op.name}</strong> as a <strong>Data Fiduciary</strong> under the Digital Personal Data Protection Act, 2023 (“DPDP Act”), collects, uses, shares and protects the personal data of people (“Data Principals”, or “you”) who use Gharmatch.
+        Gharmatch is an open-source project. You can read how our code handles your data in our <a href={REPO_URL} target="_blank" rel="noopener noreferrer">public repository</a>, for example <code>src/server/contacts.ts</code> and <code>src/lib/safety.ts</code>. This policy explains what personal data the live Gharmatch service collects, why, and your rights under India’s <strong>Digital Personal Data Protection Act, 2023</strong> (“DPDP Act”). The project maintainer named in section 7 is the Data Fiduciary, and you are the Data Principal.
       </p>
 
       <h2>1. What we collect, and why</h2>
-      <p>We collect only what is needed to match landlords and tenants on house rules and to keep people safe.</p>
-      <div className="space-y-px max-sm:space-y-0">
-        {COLLECTED.map((row) => (
-          <div key={row.what} className="grid gap-1 border-t border-line py-4 sm:grid-cols-[10rem_1fr_1fr] sm:gap-6">
-            <p className="font-semibold text-text">{row.what}</p>
-            <p><span className="mr-2 font-mono text-[11px] uppercase text-faint sm:hidden">What</span>{row.details}</p>
-            <p><span className="mr-2 font-mono text-[11px] uppercase text-faint sm:hidden">Why</span>{row.why}</p>
-          </div>
-        ))}
-        <p className="hidden border-t border-line pt-2 font-mono text-[11px] uppercase text-faint sm:block">
-          Columns: what, the details we keep, why we keep them
-        </p>
-      </div>
-
-      <h2>2. Who can see it</h2>
+      <p>We collect only what is needed to run house-rule matching and keep people safe.</p>
       <ul>
-        <li><strong>Public:</strong> listings without your phone, email or exact address. Maps show only an approximate area of about 1 km.</li>
-        <li><strong>After acceptance:</strong> your exact address, email and phone are shown to one specific person only, once an interest between you is accepted.</li>
-        <li><strong>Women and mixed-group searches:</strong> landlords see no name or free-text introduction until the tenant replies or accepts.</li>
-        <li><strong>Administrators:</strong> named administrators can see reports and flagged content, only to enforce safety rules and handle grievances.</li>
+        <li><strong>Sign-in details:</strong> your email address, name and profile picture as Google gives them, and a Google account identifier, to sign you in. Sign-in is with Google only. We do not keep Google’s access tokens.</li>
+        <li><strong>Phone number:</strong> required to rent out a home, optional for tenants. It is stored privately, left out of ordinary database queries, and shown to another user <strong>only after</strong> an interest between you is accepted.</li>
+        <li><strong>Your agreement:</strong> the date and version of the Terms and Privacy Policy you accepted, so we can record your consent and ask again if they change.</li>
+        <li><strong>Listings, searches and messages:</strong> your house rules and preferences, photos shrunk to WebP, a private full address, an approximate map pin, interest messages and visit plans.</li>
+        <li><strong>Verification dates, no ID files:</strong> when we check an ID, an ownership document or a building, we record <strong>only the type of check and its date</strong>. We never keep copies of your Aadhaar, PAN, passport or property papers.</li>
+        <li><strong>Trusted contact (optional):</strong> a name and number you enter to address your own visit-safety message. We never contact or message them.</li>
+        <li><strong>Agreed house rules:</strong> when an interest is accepted, a saved copy of the home’s house rules and disclosures at that moment, so both sides can check what was agreed.</li>
+        <li><strong>Safety report copies:</strong> when someone files a report, a saved copy of the reported listing, search or account, account ids, and recent messages between the two accounts, so evidence cannot be erased by editing or deleting.</li>
+        <li><strong>Anonymous counters:</strong> simple counts such as “interest sent”, with no name, email or phone attached, to see whether the project is useful.</li>
       </ul>
 
-      <h2>3. What we never do</h2>
+      <h2>2. Who can see your data</h2>
       <ul>
-        <li>We never sell, rent or trade your personal data, and we show no advertising.</li>
-        <li>We keep phone numbers and email addresses out of our server logs.</li>
-        <li>We send no marketing. Our only emails are about reports and appeals you file, so people who report can learn the outcome.</li>
+        <li><strong>Public visitors</strong> see listings with house rules, photos and a map showing only an area of about 1 km. They never see your phone, email or exact address.</li>
+        <li><strong>Accepted matches only:</strong> your exact address, email and phone open to <strong>one specific person</strong> only after an interest between you is accepted.</li>
+        <li><strong>Extra care for women’s searches:</strong> for searches by women or mixed groups, landlords see only the requirements. No name or free-text introduction is shown until the tenant replies.</li>
+        <li><strong>Project maintainers (admins)</strong> can see flagged posts and safety reports, only to moderate abuse and support dispute snapshots.</li>
       </ul>
 
-      <h2>4. Service providers and data held outside India</h2>
-      <p>We use these providers (“Data Processors”) to run Gharmatch, and they process data only for us and under security duties:</p>
+      <h2>3. What we do not do</h2>
       <ul>
-        <li><strong>Vercel</strong>: hosting and delivery, with functions set to Mumbai (bom1).</li>
+        <li><strong>No selling data.</strong> We never sell, rent or share user data with brokers, marketers or lead-generation companies.</li>
+        <li><strong>No personal data in logs.</strong> Phone numbers and emails are kept out of our server logs.</li>
+        <li><strong>No marketing.</strong> Our only emails are about reports and appeals you file, so people who report can learn the outcome.</li>
+        <li><strong>Today there are no ads and no fees.</strong> If the project ever adds optional paid features to cover server costs, we will give notice and update these documents first, and we will still never sell your personal contact details to third parties.</li>
+      </ul>
+
+      <h2>4. Infrastructure and service providers</h2>
+      <p>These providers store and process data on our behalf, under security duties:</p>
+      <ul>
+        <li><strong>Vercel</strong>: hosting, with functions set to Mumbai (bom1).</li>
         <li><strong>Neon</strong>: the PostgreSQL database.</li>
-        <li><strong>Cloudflare R2</strong>: storage for listing photos.</li>
+        <li><strong>Cloudflare R2</strong>: photo storage.</li>
         <li><strong>Google</strong>: sign-in and map links or embeds.</li>
-        <li><strong>Resend</strong>: sending report and appeal emails, when switched on.</li>
+        <li><strong>Resend</strong>: report and appeal emails, when switched on.</li>
       </ul>
-      <p>We choose Indian regions where we can, but some processors may process or back up data on servers outside India, including in the United States or the European Union, unless the Central Government restricts a destination under Section 16 of the DPDP Act, 2023.</p>
+      <p>Some providers may process or back up data on servers outside India, including in the United States or the European Union, unless the Central Government restricts a destination under Section 16 of the DPDP Act, 2023. Because the project uses free and low-cost tiers, a provider’s limits or outage can make the service slow or unavailable.</p>
 
-      <h2>5. Law enforcement, safety and disputes</h2>
-      <p>We may keep and disclose saved report copies, account ids, timestamps and messages:</p>
+      <h2>5. Safety, mediation and law enforcement</h2>
+      <p>We may keep and share saved report copies, account ids, messages and timestamps:</p>
       <ol>
-        <li>when a court or an authorised law enforcement agency makes a valid written request or order, including under Section 94 of the Bharatiya Nagarik Suraksha Sanhita, 2023, or under the Information Technology Act, 2000;</li>
-        <li>when we believe in good faith it is needed to prevent imminent physical harm, unlawful surveillance, extortion or fraud; or</li>
-        <li>to give both people in a match the saved house rules and disclosures during neutral facilitation under our <Link href="/terms">Terms of Use</Link>.</li>
+        <li>with the police or a court when we receive a valid legal request under Indian law, including Section 94 of the Bharatiya Nagarik Suraksha Sanhita, 2023 or the Information Technology Act, 2000, or when needed in good faith to prevent serious physical harm, unlawful surveillance, extortion or fraud; and</li>
+        <li>with both people in a match during <strong>Step 2, neutral rule-snapshot facilitation</strong>, under our <Link href="/terms">Terms of Use</Link>, so neither can falsely say the house rules were different when they matched.</li>
       </ol>
 
-      <h2>6. How long we keep data, and deleting it</h2>
+      <h2>6. Retention, deletion and your rights</h2>
       <ul>
-        <li><strong>Listings</strong> expire after 30 days unless you confirm from your dashboard that they are still available.</li>
-        <li><strong>Deleting your account</strong> from the <Link href="/account">account page</Link> removes your name, email address, phone, picture and trusted contact at once. The empty record is removed for good after 30 days.</li>
-        <li><strong>Reports</strong> that involve your account or listing keep their saved copy as long as needed to prevent abuse, defend legal claims and meet legal duties, as the DPDP Act allows.</li>
+        <li><strong>Listings expire after 30 days</strong> unless you press “Still available” on your dashboard.</li>
+        <li><strong>Edit and delete:</strong> you can edit or delete your listings and searches at any time.</li>
+        <li><strong>Account deletion and withdrawing consent:</strong> delete your account from the <Link href="/account">account page</Link>. Your name, email, phone, picture and trusted contact are removed at once, and the empty record is removed for good after 30 days. If you are part of an active or past abuse report, its saved copy is kept to prevent repeat abuse and meet legal duties, as the DPDP Act allows. Processing done before you withdraw consent stays lawful.</li>
       </ul>
-
-      <h2>7. Your rights under the DPDP Act, 2023</h2>
+      <p>Under the DPDP Act, 2023 you have the right to:</p>
       <ol>
-        <li><strong>Access.</strong> Ask for a summary of the personal data we process about you and what we do with it.</li>
-        <li><strong>Correction, completion and erasure.</strong> Edit or delete your listings, searches and profile from your dashboard, or ask us to correct or erase data.</li>
-        <li><strong>Withdraw consent.</strong> Withdraw consent at any time by deleting your account or writing to the Grievance Officer. Processing done before you withdraw stays lawful.</li>
-        <li><strong>Nominate.</strong> Nominate another person to exercise your rights if you die or cannot act for yourself.</li>
-        <li><strong>Grievance redressal.</strong> Complain to our Grievance Officer first. If you are not satisfied, or hear nothing in the time allowed, you may approach the <strong>Data Protection Board of India</strong>.</li>
+        <li>ask for a summary of the personal data we process about you and what we do with it;</li>
+        <li>have inaccurate data corrected, completed or erased;</li>
+        <li>withdraw your consent;</li>
+        <li>nominate another person to exercise your rights if you die or cannot act for yourself; and</li>
+        <li>complain to our Grievance Officer first, and then approach the <strong>Data Protection Board of India</strong> if you are not satisfied or hear nothing within the time allowed.</li>
       </ol>
 
-      <h2>8. Grievance Officer and privacy contact</h2>
-      <p>For privacy questions, access or erasure requests, consent withdrawal, nominations or safety grievances:</p>
+      <h2>7. Grievance contact</h2>
+      <p>For data requests, bugs or safety grievances, write to:</p>
       <ul>
-        <li><strong>Grievance Officer:</strong> {op.officer}</li>
+        <li><strong>Name:</strong> {op.officer}, Project Maintainer and Grievance Officer</li>
         <li><strong>Email:</strong> {mail}</li>
-        <li><strong>Address:</strong> {op.address}</li>
-        <li><strong>Response time:</strong> we acknowledge requests within <strong>24 hours</strong> and resolve them within <strong>15 days</strong>, or sooner where the law requires.</li>
+        <li><strong>Location:</strong> {LOCATION}</li>
+        <li><strong>Response time:</strong> acknowledged within <strong>24 hours</strong> and resolved within <strong>15 days</strong>.</li>
       </ul>
     </Page>
   );

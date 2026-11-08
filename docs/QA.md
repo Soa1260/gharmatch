@@ -9,7 +9,7 @@ Run against a Neon dev branch with real Google credentials (Resend is optional, 
 - [ ] A new account cannot continue without ticking the "18 or older, agree to Terms and Privacy" box, and the date is saved
 - [ ] Bumping `POLICY_VERSION` makes a signed-in user agree again before reaching the dashboard
 - [ ] After an interest is accepted, both people see "Rules agreed at acceptance". Editing the listing afterwards does not change it
-- [ ] `/terms` and `/privacy` show no `[to be filled before launch]` once the four operator variables are set
+- [ ] `/terms` and `/privacy` show no `[to be filled before launch]` once the two grievance variables are set, and no street address appears anywhere
 - [ ] Onboarding rejects no role and a bad mobile number
 - [ ] Choosing "Rent out a home" without a mobile number is refused. Tenants can leave it empty
 - [ ] A landlord with no number on file who opens Post your home is sent to the profile page first, and the form is prefilled

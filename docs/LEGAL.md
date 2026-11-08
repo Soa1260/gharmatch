@@ -1,15 +1,16 @@
 # Legal text: what is in the product, and what a lawyer must check
 
-The Terms of Use (`/terms`) and Privacy Policy (`/privacy`) were drafted outside this repository and then adapted so
-they describe what the app really does. Neither is legal advice, and both stay marked as drafts until a lawyer
-signs them off.
+The Terms of Use (`/terms`) and Privacy Policy (`/privacy`) are the "community edition": written for a free,
+open-source project run by one maintainer on free-tier hosting. They were drafted outside this repository and then
+adapted so they describe what the app really does. Neither is legal advice, and both stay marked as drafts until a
+lawyer signs them off.
 
-## What the code now backs up
+## What the code backs up
 
 | Promise in the text | Where it is enforced |
 |---|---|
 | Explicit agreement, 18+, to Terms and Privacy | Required checkbox on `/onboarding`; date and version saved on the user (`termsAcceptedAt`, `termsVersion`); everyone is asked again after `POLICY_VERSION` changes (`src/lib/legal.ts`, `requireOnboarded`) |
-| House-rule snapshot saved when a match is accepted (Terms clause 8, Tier 2) | `Interest.matchSnapshot`, written in `respondToInterest`; both people read it on the dashboard (`AgreedRulesCard`). Holds no address, phone or email |
+| House-rule snapshot saved when a match is accepted (Terms section 6, Step 2) | `Interest.matchSnapshot`, written in `respondToInterest`; both people read it on the dashboard (`AgreedRulesCard`). Holds no address, phone or email |
 | We do not keep copies of IDs or ownership papers | Checks store a type and a date only (`identityCheckedAt`, `ownershipReviewedAt`, `Inspection`). No upload route exists for them. Do not ask people to email documents |
 | We do not keep Google's tokens | Cleared on every sign-in (`src/auth.ts`) |
 | Phone required to rent out a home | Profile schema and the listing service (`requirePhoneForLandlord`) |
@@ -17,26 +18,38 @@ signs them off.
 | Usage counts carry no identifiers | `Event` table has a name and a time only |
 | Phone and email kept out of logs | Prisma omits them by default; services select them explicitly |
 
-## Changes made to the original draft so it matches the product
+## Choices in the community edition
 
-- Sign-in is **Google only**, so the "magic link" wording was removed.
-- Ownership documents reviewed means a **property tax receipt, utility bill, property card or an owner's authorisation letter**, the list the admin form really offers. The draft named a sale deed index.
+- **Not "free forever".** Terms 1.1 reserves the right to add optional paid features or fees later, with notice and updated terms, and the Privacy Policy says contact details will still never be sold. This avoids a bait-and-switch claim if hosting costs force a change.
+- **Best-effort availability.** Terms 1.2 says nothing is promised when free-tier limits (Vercel Hobby, Neon free) cause slowness, outages or undelivered messages.
+- **No street address.** Only `Ahmedabad / Gandhinagar, Gujarat, India` is printed, so a personal home address is never on a public page. The Grievance Officer is the project maintainer, reachable by `NEXT_PUBLIC_GRIEVANCE_EMAIL`.
+
+## Changes made to the drafts so they match the product
+
+- Sign-in is **Google only**, so "magic link" wording was removed.
+- The phone number is **required for landlords** (optional for tenants), not optional for everyone.
+- Ownership documents reviewed means a **property tax receipt, utility bill, property card or an owner's authorisation letter**, the list the admin form really offers.
 - Identity checked means a government photo ID seen **in person or on video** (the two methods the admin form offers).
-- Emails are sent only about **reports and appeals**, not for matches or listing expiry, so the privacy text says that.
-- Clause 9.2 (release) now starts with "to the extent the law allows", because a blanket release of injury claims is unlikely to hold.
-- "Gujarat Police regulations" became "local police rules": I could not confirm the exact rule.
+- Emails are sent only about **reports and appeals**, not for matches or listing expiry.
+- The privacy text no longer says data is "encrypted" at providers, which we cannot vouch for.
+- It names the maintainer as the **Data Fiduciary**, which the DPDP Act expects a notice to identify.
+- It records that **agreement is saved per version** and that **agreed house rules are saved** at acceptance.
+- Release (7.2) starts with "to the fullest extent the law allows".
 
 ## Questions for the lawyer
 
-1. **Response times.** The text promises acknowledgement in 24 hours, resolution in 15 days, and 72 hours for impersonation, privacy and surveillance complaints. As I read the IT Rules, 2021, complaints about intimate images or impersonation may need action within **24 hours**, and 72 hours relates to helping government agencies. Confirm before launch, and confirm you can staff it.
-2. **Intermediary status** under Section 79 depends on how you actually behave (due diligence, takedown on notice). Confirm that the admin hold and review features support that.
-3. **Liability cap and release** (clauses 9 and 10): confirm what holds against consumers, and that a ₹100 cap and an indemnity are acceptable.
-4. **DPDP Act.** Confirm the notice wording, whether a consent manager or Data Protection Officer is needed at your size, the cross-border statement, and how to handle a nomination request.
-5. **Mediation Act, 2023**: confirm the Tier 3 wording works as a pre-litigation step.
-6. **Women-only and men-only listings**: confirm they are lawful and how to describe them.
-7. **Police tenant verification**: confirm what applies to landlords in Gujarat and say so in the Terms.
+1. **"Open source".** The repository is public, but it has **no licence file**. Without one, the code is public to read, not open source in the legal sense, and the Terms call it open source. Choose a licence (MIT, Apache 2.0, AGPL) or change the wording.
+2. **Response times.** The text promises acknowledgement in 24 hours, resolution in 15 days, and 72 hours for urgent privacy or impersonation reports. As I read the IT Rules, 2021, complaints about intimate images or impersonation may need action within **24 hours**, and 72 hours relates to helping government agencies. Confirm before launch, and confirm one person can staff it.
+3. **A ₹0 liability cap and release (Terms 7).** Confirm what holds against consumers, whether a statement that a cap is zero is acceptable, and that an indemnity from users is fine.
+4. **Intermediary status** under Section 79 depends on how you behave (due diligence, takedown on notice). Confirm that the admin hold and review features support that.
+5. **DPDP Act.** Confirm the notice wording, whether a consent manager or Data Protection Officer is needed at your size, the cross-border statement, and how to handle a nomination request.
+6. **An individual as operator.** The Terms are made "with the project maintainer(s)", so you carry personal liability. Ask whether a company or LLP, even a small one, should be named instead.
+7. **Mediation Act, 2023**: confirm Step 3 works as a pre-litigation step.
+8. **Women-only and men-only listings**: confirm they are lawful and how to describe them.
+9. **Police tenant verification**: confirm what applies to landlords in Gujarat and say so in the Terms.
 
 ## Where the facts about you come from
 
-`NEXT_PUBLIC_OPERATOR_NAME`, `NEXT_PUBLIC_GRIEVANCE_OFFICER`, `NEXT_PUBLIC_GRIEVANCE_EMAIL` and `NEXT_PUBLIC_OPERATOR_ADDRESS`.
+`NEXT_PUBLIC_GRIEVANCE_OFFICER` (your name) and `NEXT_PUBLIC_GRIEVANCE_EMAIL` (a real inbox).
 They are not invented anywhere in the code. Until they are set, both pages say "[to be filled before launch]".
+Set them as plain (not Sensitive) Vercel variables, because `NEXT_PUBLIC_` values are built into the pages.
