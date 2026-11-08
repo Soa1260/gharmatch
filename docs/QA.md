@@ -7,6 +7,8 @@ Run against a Neon dev branch with real Google credentials (Resend is optional, 
 - [ ] The sign-in page offers Google only (no email field), and a signed-in account shows as email verified in admin
 - [ ] `/api/auth/signin/resend` no longer works
 - [ ] Onboarding rejects no role and a bad mobile number
+- [ ] Choosing "Rent out a home" without a mobile number is refused. Tenants can leave it empty
+- [ ] A landlord with no number on file who opens Post your home is sent to the profile page first, and the form is prefilled
 
 ## Landlord
 - [ ] Post a home. It appears on `/listings` and its page shows no phone, email or exact address
