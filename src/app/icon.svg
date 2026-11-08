@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Gharmatch">
+  <title>Gharmatch</title>
+  <defs>
+    <!-- The lamp: a warm glow that fades out, behind the doorway -->
+    <radialGradient id="lamp" cx="256" cy="372" r="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f0b56e" stop-opacity="0.34"/>
+      <stop offset="0.55" stop-color="#f0b56e" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#f0b56e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Dark tile, the same near-black as the site -->
+  <rect width="512" height="512" rx="116" fill="#0a0c10"/>
+  <rect width="512" height="512" rx="116" fill="url(#lamp)"/>
+  <!-- Two halves of one home. Same floor, staggered roof: landlord and tenant meeting in the middle. -->
+  <g stroke-linejoin="round" stroke-width="26">
+    <polygon points="244,100 86,240 86,424 244,424" fill="#f4efe6" stroke="#f4efe6"/>
+    <polygon points="268,128 426,268 426,424 268,424" fill="#f0b56e" stroke="#f0b56e"/>
+  </g>
+  <!-- The doorway at the seam, open to the lamplight -->
+  <path d="M224 437 V356 a32 32 0 0 1 64 0 V437 Z" fill="#0a0c10"/>
+  <circle cx="256" cy="366" r="11" fill="#f0b56e"/>
+</svg>

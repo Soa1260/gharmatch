@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { REPO_URL } from "@/lib/legal";
+import { LogoMark } from "./LogoMark";
 
 export function Footer() {
   // No placeholder address: until a real one is set, the footer points to the Terms, where the officer is named.
@@ -8,7 +9,10 @@ export function Footer() {
     <footer className="border-t border-line">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p className="font-display text-xl font-semibold tracking-tight">gharmatch<span className="text-lamp">.</span></p>
+          <p className="font-display flex items-center gap-2.5 text-xl font-semibold tracking-tight">
+            <LogoMark size={28} />
+            <span>gharmatch<span className="text-lamp">.</span></span>
+          </p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-faint">
             Homes for rent in Ahmedabad and Gandhinagar, matched on house rules. No broker fee.
           </p>
