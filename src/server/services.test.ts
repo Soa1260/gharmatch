@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { profileSchema } from "@/lib/schemas";
 import { createTestDb, makeUser, validListing, validRequirement } from "@/test/testDb";
 import { getContactsForInterest } from "./contacts";
 import type { Db } from "./db";
@@ -20,9 +21,11 @@ afterAll(async () => close());
 const hello = { message: "Hello, I like this home." };
 
 async function setup(opts: { group?: "MEN" | "WOMEN" | "MIXED"; landlordPhone?: string | null; tenantName?: string } = {}) {
-  const landlord = await makeUser(db, { isLandlord: true, name: "Landlord One", phone: opts.landlordPhone });
+  const landlord = await makeUser(db, { isLandlord: true, name: "Landlord One", phone: opts.landlordPhone === null ? undefined : opts.landlordPhone });
   const tenant = await makeUser(db, { isTenant: true, name: opts.tenantName ?? "Asha Rao" });
   const listing = await createListing(db, limiter, landlord, validListing);
+  // Posting needs a number, so "no phone on file" means it was removed after the home went live.
+  if (opts.landlordPhone === null) await db.user.update({ where: { id: landlord.id }, data: { phone: null } });
   const requirement = await createRequirement(db, limiter, tenant, { ...validRequirement, occupantGroup: opts.group ?? "MEN" });
   return { landlord, tenant, listing, requirement };
 }
@@ -150,6 +153,21 @@ describe("women's safety", () => {
     await expect(
       inviteTenant(db, limiter, landlord, listing.id, requirement.id, { message: "Your search fits this home." }),
     ).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("refuses to publish or edit a home for a landlord with no phone on file", async () => {
+    const noPhone = await makeUser(db, { isLandlord: true, phone: null });
+    await expect(createListing(db, limiter, noPhone, validListing)).rejects.toMatchObject({ code: "FORBIDDEN" });
+    const { landlord, listing } = await setup();
+    await db.user.update({ where: { id: landlord.id }, data: { phone: null } });
+    await expect(updateListing(db, landlord, listing.id, validListing)).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("requires a mobile number in the profile of anyone who rents out a home", () => {
+    const base = { name: "Ravi", isTenant: false };
+    expect(profileSchema.safeParse({ ...base, isLandlord: true }).success).toBe(false);
+    expect(profileSchema.safeParse({ ...base, isLandlord: true, phone: "9876543210" }).success).toBe(true);
+    expect(profileSchema.safeParse({ name: "Asha", isLandlord: false, isTenant: true }).success).toBe(true);
   });
 
   it("lets a landlord with a phone invite, and only the tenant accept to reveal contacts", async () => {

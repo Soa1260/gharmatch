@@ -136,4 +136,7 @@ export const profileSchema = z.object({
   phone: z.string().trim().regex(/^(\+91)?[6-9]\d{9}$/, "Enter a 10-digit Indian mobile number").optional(),
   isLandlord: z.boolean(),
   isTenant: z.boolean(),
-}).refine((v) => v.isLandlord || v.isTenant, { path: ["isTenant"], message: "Choose at least one role." });
+})
+  .refine((v) => v.isLandlord || v.isTenant, { path: ["isTenant"], message: "Choose at least one role." })
+  // People who rent out a home must be reachable by us if a tenant reports a problem.
+  .refine((v) => !v.isLandlord || Boolean(v.phone), { path: ["phone"], message: "Landlords need a mobile number. It stays hidden until you accept a tenant." });

@@ -22,10 +22,13 @@ function guardFlag(input: ListingInput): boolean {
   return checkText(text).verdict === "flag" || scamSignals(text).length > 0;
 }
 
-/** Women-only homes are the ones women trust most, so the person offering one must be reachable by us. */
-function requirePhoneForWomenOnly(input: ListingInput, hasPhone: boolean) {
-  if (input.genderPolicy === "WOMEN_ONLY" && !hasPhone) {
-    throw new AppError("FORBIDDEN", "Add a mobile number to your profile before posting a women-only home. It stays hidden from tenants.");
+/**
+ * Every landlord must have a mobile number on file, so a person we can reach stands behind each listing.
+ * It stays hidden from tenants until an interest is accepted. Checked here, not only in the form.
+ */
+function requirePhoneForLandlord(_input: ListingInput, hasPhone: boolean) {
+  if (!hasPhone) {
+    throw new AppError("FORBIDDEN", "Add a mobile number to your profile before posting a home. It stays hidden from tenants until you accept someone.");
   }
 }
 
@@ -62,7 +65,7 @@ export async function createListing(db: Db, limiter: RateLimiter, actor: Actor |
   // Validation comes first so a mistake in the form does not use up one of the day's five posts.
   // Looking up a map link is the costly part, so it has its own, looser limit.
   const input = listingSchema.parse(raw);
-  requirePhoneForWomenOnly(input, user.hasPhoneOnFile);
+  requirePhoneForLandlord(input, user.hasPhoneOnFile);
   await enforce(limiter, "locate", user.id);
   const { point, status } = await locate(input, resolver);
   await enforce(limiter, "createListing", user.id);
@@ -107,7 +110,7 @@ export async function updateListing(db: Db, actor: Actor | null, listingId: stri
   const user = await requireActiveUser(db, actor);
   const existing = await ownedListing(db, user.id, listingId);
   const input = listingSchema.parse(raw);
-  requirePhoneForWomenOnly(input, user.hasPhoneOnFile);
+  requirePhoneForLandlord(input, user.hasPhoneOnFile);
   const { point, status } = await locate(input, resolver);
   return db.listing.update({
     where: { id: listingId },
