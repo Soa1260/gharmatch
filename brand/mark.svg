@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 60 392 392" width="392" height="392" role="img" aria-label="Gharmatch">
+  <title>Gharmatch</title>
+  <!-- House only, transparent background. Cream half, lamp-amber half, a lit doorway between them. -->
+  <g stroke-linejoin="round" stroke-width="26">
+    <polygon points="244,100 86,240 86,424 244,424" fill="#f4efe6" stroke="#f4efe6"/>
+    <polygon points="268,128 426,268 426,424 268,424" fill="#f0b56e" stroke="#f0b56e"/>
+  </g>
+  <path d="M224 437 V356 a32 32 0 0 1 64 0 V437 Z" fill="#0a0c10"/>
+  <circle cx="256" cy="366" r="11" fill="#f0b56e"/>
+</svg>
