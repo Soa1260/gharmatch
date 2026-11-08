@@ -41,7 +41,7 @@ export default function Privacy() {
       <ul>
         <li><strong>No selling data.</strong> We never sell, rent or share user data with brokers, marketers or lead-generation companies.</li>
         <li><strong>No personal data in logs.</strong> Phone numbers and emails are kept out of our server logs.</li>
-        <li><strong>No marketing.</strong> Our only emails are about reports and appeals you file, so people who report can learn the outcome.</li>
+        <li><strong>No marketing.</strong> We only send essential service emails, such as reports and appeals you file, or critical account and safety notices, and never promotional spam.</li>
         <li><strong>Today there are no ads and no fees.</strong> If the project ever adds optional paid features to cover server costs, we will give notice and update these documents first, and we will still never sell your personal contact details to third parties.</li>
       </ul>
 
@@ -77,6 +77,8 @@ export default function Privacy() {
         <li>nominate another person to exercise your rights if you die or cannot act for yourself; and</li>
         <li>complain to our Grievance Officer first, and then approach the <strong>Data Protection Board of India</strong> if you are not satisfied or hear nothing within the time allowed.</li>
       </ol>
+
+      <p><strong>Security and your duties.</strong> We protect your data with encryption in transit (HTTPS) and strict server-side access controls (see <code>src/server/contacts.ts</code>). Under Section 15 of the DPDP Act, 2023, you must not impersonate anyone, give false information during verification, or file false or frivolous reports or grievances.</p>
 
       <h2>7. Grievance contact</h2>
       <p>For data requests, bugs or safety grievances, write to:</p>
