@@ -66,7 +66,7 @@ export default function Terms() {
       <h2>7. As-is service, liability limit and indemnity</h2>
       <p><strong>7.1 As is.</strong> Gharmatch and its match scores are provided “as is” and “as available”, without warranties of any kind. Match scores are aids built from what people enter. They do not predict behaviour or compatibility.</p>
       <p><strong>7.2 Your own risk.</strong> You use Gharmatch and visit homes at your own risk. To the fullest extent the law allows, you release the project maintainers and contributors from claims, financial loss, property damage or personal injury arising from your dealings with other Users.</p>
-      <p><strong>7.3 Liability limit.</strong> Because Gharmatch is provided free of charge, to the fullest extent permitted by Indian law, the total liability of Gharmatch, its maintainers and open-source contributors for any claim whatsoever is <strong>₹0 (zero rupees)</strong>.</p>
+      <p><strong>7.3 Liability limit.</strong> Because Gharmatch is provided free of charge, to the fullest extent permitted by Indian law, the total liability of Gharmatch, its maintainers and open-source contributors for any claim whatsoever is <strong>₹0 (zero rupees)</strong>, or, if applicable law requires a nominal floor, a maximum aggregate of <strong>₹100 (one hundred rupees)</strong>.</p>
       <p><strong>7.4 Indemnity.</strong> If your breach of these Terms, a false listing, an unlawful camera, or a dispute with another User causes legal claims, police notices or expenses against Gharmatch or its maintainers, you agree to cover the resulting legal costs, including reasonable advocate fees.</p>
 
       <h2>8. Moderation and updates</h2>

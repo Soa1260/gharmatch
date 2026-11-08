@@ -30,7 +30,8 @@ lawyer signs them off.
 - The phone number is **required for landlords** (optional for tenants), not optional for everyone.
 - Ownership documents reviewed means a **property tax receipt, utility bill, property card or an owner's authorisation letter**, the list the admin form really offers.
 - Identity checked means a government photo ID seen **in person or on video** (the two methods the admin form offers).
-- Emails are sent only about **reports and appeals**, not for matches or listing expiry.
+- Emails today are only about **reports and appeals**. The Privacy Policy says "essential service emails, such as reports and appeals, or critical account and safety notices", which leaves room to add safety notices later, but never marketing.
+- The Privacy Policy states users' duties under Section 15 of the DPDP Act (no impersonation, no false information, no false or frivolous reports) and the security measures: HTTPS and server-side access controls.
 - The privacy text no longer says data is "encrypted" at providers, which we cannot vouch for.
 - It names the maintainer as the **Data Fiduciary**, which the DPDP Act expects a notice to identify.
 - It records that **agreement is saved per version** and that **agreed house rules are saved** at acceptance.
@@ -40,7 +41,7 @@ lawyer signs them off.
 
 1. **Licence.** The repository is under the **GNU AGPL v3** (`LICENSE`, `"license": "AGPL-3.0-only"` in `package.json`), so the Terms' "open source" wording is accurate. Under AGPL section 13, anyone using a modified hosted copy must be offered its source, which is why the footer links to the repository. Two things to confirm: that you hold the copyright to everything in the repo (including anything you accept from contributors later, so consider a contributor agreement), and how the AGPL sits with charging for features in future. It allows selling, but a modified hosted version must publish its source.
 2. **Response times.** The text promises acknowledgement in 24 hours, resolution in 15 days, and 72 hours for urgent privacy or impersonation reports. As I read the IT Rules, 2021, complaints about intimate images or impersonation may need action within **24 hours**, and 72 hours relates to helping government agencies. Confirm before launch, and confirm one person can staff it.
-3. **A ₹0 liability cap and release (Terms 7).** Confirm what holds against consumers, whether a statement that a cap is zero is acceptable, and that an indemnity from users is fine.
+3. **The ₹0 liability cap and release (Terms 7).** The cap is "₹0, or if applicable law requires a nominal floor, a maximum of ₹100", so the clause still stands if a court will not enforce a zero cap. Confirm that wording, what holds against consumers, and that an indemnity from users is fine.
 4. **Intermediary status** under Section 79 depends on how you behave (due diligence, takedown on notice). Confirm that the admin hold and review features support that.
 5. **DPDP Act.** Confirm the notice wording, whether a consent manager or Data Protection Officer is needed at your size, the cross-border statement, and how to handle a nomination request.
 6. **An individual as operator.** The Terms are made "with the project maintainer(s)", so you carry personal liability. Ask whether a company or LLP, even a small one, should be named instead.
