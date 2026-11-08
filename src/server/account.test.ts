@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createTestDb, makeUser, validListing, validRequirement } from "@/test/testDb";
+import { POLICY_VERSION } from "@/lib/legal";
 import { blockUser, fileReport, saveProfile } from "./account";
 import type { Db } from "./db";
 import { sendInterest } from "./interests";
@@ -56,8 +57,27 @@ describe("profile", () => {
     const user = await makeUser(db);
     await expect(saveProfile(db, user, { name: "Ravi", isLandlord: false, isTenant: false })).rejects.toThrow();
     await expect(saveProfile(db, user, { name: "Ravi", phone: "12345", isLandlord: true, isTenant: false })).rejects.toThrow();
-    await saveProfile(db, user, { name: "Ravi", phone: "9876543210", isLandlord: true, isTenant: false });
+    await saveProfile(db, user, { name: "Ravi", phone: "9876543210", isLandlord: true, isTenant: false, acceptTerms: true });
     const saved = await db.user.findUniqueOrThrow({ where: { id: user.id }, select: { isLandlord: true, onboarded: true } });
     expect(saved).toEqual({ isLandlord: true, onboarded: true });
+  });
+
+  it("will not continue until the person agrees to the Terms, and records which version", async () => {
+    const user = await makeUser(db);
+    const profile = { name: "Asha", isLandlord: false, isTenant: true };
+    await expect(saveProfile(db, user, profile)).rejects.toMatchObject({ code: "INVALID" });
+    expect((await db.user.findUniqueOrThrow({ where: { id: user.id }, select: { termsVersion: true } })).termsVersion).toBeNull();
+
+    await saveProfile(db, user, { ...profile, acceptTerms: true });
+    const after = await db.user.findUniqueOrThrow({ where: { id: user.id }, select: { termsVersion: true, termsAcceptedAt: true } });
+    expect(after.termsVersion).toBe(POLICY_VERSION);
+    expect(after.termsAcceptedAt).toBeInstanceOf(Date);
+
+    // Already agreed to this version: editing the profile later does not ask again.
+    await expect(saveProfile(db, user, { ...profile, name: "Asha R" })).resolves.toBeUndefined();
+
+    // A new version of the documents asks again.
+    await db.user.update({ where: { id: user.id }, data: { termsVersion: "older" } });
+    await expect(saveProfile(db, user, profile)).rejects.toMatchObject({ code: "INVALID" });
   });
 });

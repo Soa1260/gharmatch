@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { adminEmails } from "@/lib/env";
+import { POLICY_VERSION } from "@/lib/legal";
 import { getDb } from "./db";
 import type { Actor } from "./actor";
 
@@ -22,10 +23,11 @@ export async function requireOnboarded(next: string) {
   const actor = await requireSignedIn(next);
   const user = await getDb().user.findUnique({
     where: { id: actor.id },
-    select: { id: true, name: true, onboarded: true, isLandlord: true, isTenant: true, status: true },
+    select: { id: true, name: true, onboarded: true, isLandlord: true, isTenant: true, status: true, termsVersion: true },
   });
   if (!user || user.status !== "ACTIVE") redirect("/signin");
-  if (!user.onboarded) redirect(`/onboarding?next=${encodeURIComponent(next)}`);
+  // New people, and everyone after the Terms or Privacy Policy change, agree before going further.
+  if (!user.onboarded || user.termsVersion !== POLICY_VERSION) redirect(`/onboarding?next=${encodeURIComponent(next)}`);
   return user;
 }
 

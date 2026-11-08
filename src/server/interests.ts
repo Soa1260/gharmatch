@@ -6,6 +6,7 @@ import { interestMessageSchema } from "@/lib/schemas";
 import { isBlockedEitherWay, requireActiveUser, type Actor } from "./actor";
 import type { Db } from "./db";
 import { AppError, isUniqueViolation } from "./errors";
+import { buildAgreedRules, parseAgreedRules, type AgreedRules } from "./matchSnapshot";
 import { enforce, type RateLimiter } from "./rateLimit";
 
 /** Conflicts about who may live in the home or where it is can never be acknowledged away. */
@@ -166,7 +167,41 @@ export async function respondToInterest(db: Db, actor: Actor | null, interestId:
     data: { status, respondedAt: new Date() },
   });
   if (res.count === 0) throw new AppError("CONFLICT", "This was already answered.");
-  if (status === "ACCEPTED") await db.event.create({ data: { name: "interest_accepted" } });
+  if (status === "ACCEPTED") {
+    await saveAgreedRules(db, interestId);
+    await db.event.create({ data: { name: "interest_accepted" } });
+  }
+}
+
+/** Saves the home's rules and disclosures as they are right now, so a later edit cannot rewrite what was agreed. */
+async function saveAgreedRules(db: Db, interestId: string) {
+  const i = await db.interest.findUnique({
+    where: { id: interestId },
+    select: {
+      message: true, respondedAt: true,
+      listing: {
+        select: {
+          title: true, city: true, area: true, rent: true, deposit: true, bhk: true, furnishing: true, availableFrom: true,
+          dietPolicy: true, tenantTypes: true, genderPolicy: true, pets: true, smoking: true, alcohol: true, visitors: true,
+          quietHours: true, minLeaseMonths: true, noticeDays: true, maxOccupants: true, parking: true, wfhAllowed: true,
+          securityFeatures: true, cctvLocations: true, cctvAccess: true, ownerLivesOnSite: true, occupancyNote: true,
+          keyHolders: true, ownerAccess: true, noticeHours: true,
+        },
+      },
+    },
+  });
+  if (!i) return;
+  const snapshot = buildAgreedRules(i.listing, i.message, i.respondedAt ?? new Date());
+  await db.interest.update({ where: { id: interestId }, data: { matchSnapshot: JSON.stringify(snapshot) } });
+}
+
+/** The saved rules for an accepted interest. Only the two people involved can read it. */
+export async function getAgreedRules(db: Db, actor: Actor | null, interestId: string): Promise<AgreedRules | null> {
+  const user = await requireActiveUser(db, actor);
+  await loadParty(db, user.id, interestId);
+  const row = await db.interest.findUnique({ where: { id: interestId }, select: { status: true, matchSnapshot: true } });
+  if (!row || row.status !== "ACCEPTED") return null;
+  return parseAgreedRules(row.matchSnapshot);
 }
 
 export async function withdrawInterest(db: Db, actor: Actor | null, interestId: string) {

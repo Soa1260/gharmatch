@@ -1,12 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { saveProfileAction, type FormState } from "@/app/actions";
 import { FormMessage, KeptForm, Pills, SubmitButton, TextInput } from "./Fields";
 
 const initialState: FormState = {};
 
-export function OnboardingForm({ next, initial }: { next: string; initial: { name: string; phone: string; roles: string[] } }) {
+export function OnboardingForm({
+  next,
+  initial,
+  needsAgreement,
+}: {
+  next: string;
+  initial: { name: string; phone: string; roles: string[] };
+  needsAgreement: boolean;
+}) {
   const [state, action, pending] = useActionState(saveProfileAction, initialState);
   const e = state.fieldErrors ?? {};
   return (
@@ -23,6 +32,16 @@ export function OnboardingForm({ next, initial }: { next: string; initial: { nam
         error={e.phone}
       />
       <Pills name="roles" label="I want to" multiple defaultValue={initial.roles} options={[{ value: "tenant", label: "Find a home" }, { value: "landlord", label: "Rent out a home" }]} error={e.isTenant} />
+      {needsAgreement ? (
+        <label className="flex items-start gap-3 rounded-xl border border-line p-4 text-sm leading-relaxed text-soft">
+          <input type="checkbox" name="acceptTerms" value="yes" required className="mt-1 size-4 shrink-0 accent-[var(--color-lamp)]" />
+          <span>
+            I confirm I am 18 or older and agree to the{" "}
+            <Link href="/terms" target="_blank" className="underline underline-offset-4">Terms of Use</Link> (including the mediative dispute framework) and the{" "}
+            <Link href="/privacy" target="_blank" className="underline underline-offset-4">Privacy Policy</Link>.
+          </span>
+        </label>
+      ) : null}
       <FormMessage error={state.error} />
       <SubmitButton>Continue</SubmitButton>
     </KeptForm>

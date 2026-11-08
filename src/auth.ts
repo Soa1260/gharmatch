@@ -22,8 +22,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   events: {
     /** Google has already confirmed the address, so a Google sign-in counts as a verified email. Magic links verify themselves. */
     async signIn({ user, account, profile }) {
-      if (account?.provider !== "google" || !user?.id || profile?.email_verified !== true) return;
-      await authDb().user.updateMany({ where: { id: user.id, emailVerified: null }, data: { emailVerified: new Date() } });
+      if (account?.provider !== "google" || !user?.id) return;
+      // The Privacy Policy says we do not keep Google's tokens. Sign-in needs only who the person is, so drop them.
+      await authDb().account.updateMany({
+        where: { userId: user.id, provider: "google" },
+        data: { access_token: null, refresh_token: null, id_token: null, expires_at: null, scope: null, session_state: null },
+      });
+      if (profile?.email_verified === true) {
+        await authDb().user.updateMany({ where: { id: user.id, emailVerified: null }, data: { emailVerified: new Date() } });
+      }
     },
   },
   callbacks: {
