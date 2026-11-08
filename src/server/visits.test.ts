@@ -3,7 +3,7 @@ import { visitIcs } from "@/lib/ics";
 import { createTestDb, makeUser, validListing, validRequirement } from "@/test/testDb";
 import type { Db } from "./db";
 import { respondToInterest, sendInterest } from "./interests";
-import { createListing } from "./listings";
+import { createListing, setListingStatus } from "./listings";
 import { PostgresRateLimiter } from "./rateLimit";
 import { createRequirement } from "./requirements";
 import { cancelVisit, checkIn, checkOut, confirmVisit, getVisitForCalendar, listVisits, proposeVisit } from "./visits";
@@ -70,6 +70,23 @@ describe("visit workflow", () => {
     const v = await proposeVisit(db, a.tenant, a.interest.id, { scheduledAt: soon(48) });
     await confirmVisit(db, a.landlord, v.id, { representativeName: "Meera Joshi", representativeRole: "OWNER" });
     await expect(checkIn(db, a.tenant, v.id)).rejects.toMatchObject({ code: "INVALID" });
+  });
+
+  it("cancels waiting and confirmed visits when the landlord deletes the home", async () => {
+    const a = await accepted();
+    const waiting = await proposeVisit(db, a.tenant, a.interest.id, { scheduledAt: soon(24) });
+    const confirmed = await proposeVisit(db, a.tenant, a.interest.id, { scheduledAt: soon(48) });
+    await confirmVisit(db, a.landlord, confirmed.id, { representativeName: "Meera Joshi", representativeRole: "OWNER" });
+
+    await setListingStatus(db, a.landlord, a.listing.id, "DELETED");
+
+    const statuses = (await listVisits(db, a.tenant)).filter((v) => [waiting.id, confirmed.id].includes(v.id)).map((v) => v.status);
+    expect(statuses).toEqual(["CANCELLED", "CANCELLED"]);
+    // Pausing a home is not deleting it: visits already arranged stay.
+    const b = await accepted();
+    const kept = await proposeVisit(db, b.tenant, b.interest.id, { scheduledAt: soon(24) });
+    await setListingStatus(db, b.landlord, b.listing.id, "PAUSED");
+    expect((await listVisits(db, b.tenant)).find((v) => v.id === kept.id)?.status).toBe("REQUESTED");
   });
 
   it("lets either side cancel, and nobody else touch it", async () => {
