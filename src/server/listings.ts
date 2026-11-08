@@ -134,6 +134,11 @@ export async function setListingStatus(db: Db, actor: Actor | null, listingId: s
       ? { status, lastConfirmedAt: new Date(), expiresAt: new Date(Date.now() + LISTING_LIFETIME_DAYS * DAY_MS) }
       : { status };
   await db.listing.update({ where: { id: listingId }, data });
+  // A deleted home cannot be visited: cancel visits still waiting or confirmed, so nobody is sent to an address
+  // that is no longer on offer. Finished visits (checked in or out) keep their record.
+  if (status === "DELETED") {
+    await db.visit.updateMany({ where: { listingId, status: { in: ["REQUESTED", "CONFIRMED"] } }, data: { status: "CANCELLED" } });
+  }
 }
 
 /** The "still available?" button: restarts the 30-day clock. */
