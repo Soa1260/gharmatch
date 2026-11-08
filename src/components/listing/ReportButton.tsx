@@ -28,8 +28,8 @@ export function ReportButton({ targetType, targetId }: { targetType: "LISTING" |
           <EmergencyStrip compact />
         </div>
       ) : null}
-      <TextInput name="incidentAt" label="When did it happen (optional)" type="datetime-local" />
-      <TextArea name="details" label="What happened (optional)" hint="We save a copy of this listing and your messages with it, so editing or deleting it cannot erase the record." maxLength={800} />
+      <TextInput name="incidentAt" label="When did it happen (optional)" type="datetime-local" error={state.fieldErrors?.incidentAt} />
+      <TextArea name="details" label="What happened (optional)" hint="We save a copy of this listing and your messages with it, so editing or deleting it cannot erase the record." maxLength={800} error={state.fieldErrors?.details} />
       <FormMessage error={state.error} ok={state.ok} />
       <div className="flex gap-3">
         <SubmitButton>Send report</SubmitButton>

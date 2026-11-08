@@ -82,7 +82,7 @@ export function MatchPanel({ listingId, slug }: { listingId: string; slug: strin
         <form action={action} className="mt-6 space-y-4">
           <input type="hidden" name="listingId" value={listingId} />
           <input type="hidden" name="requirementId" value={s.id} />
-          <TextArea name="message" label="A short note to the landlord" hint="No phone numbers, emails or links. Contacts open after they accept." maxLength={400} required />
+          <TextArea name="message" label="A short note to the landlord" hint="No phone numbers, emails or links. Contacts open after they accept." maxLength={400} required error={state.fieldErrors?.message} />
           {conflicts ? (
             <label className="flex items-start gap-3 text-sm text-soft">
               <input type="checkbox" name="acknowledgeConflicts" value="yes" required className="mt-1 size-4 accent-[var(--color-lamp)]" />
