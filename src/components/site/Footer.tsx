@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { REPO_URL } from "@/lib/legal";
 
 export function Footer() {
   // No placeholder address: until a real one is set, the footer points to the Terms, where the officer is named.
@@ -10,6 +11,12 @@ export function Footer() {
           <p className="font-display text-xl font-semibold tracking-tight">gharmatch<span className="text-lamp">.</span></p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-faint">
             Homes for rent in Ahmedabad and Gandhinagar, matched on house rules. No broker fee.
+          </p>
+          <p className="mt-3 max-w-sm text-xs leading-relaxed text-faint">
+            Open source under the GNU AGPL v3.{" "}
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-text">
+              Source code
+            </a>
           </p>
         </div>
         <ul className="space-y-0 text-sm text-soft">

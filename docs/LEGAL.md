@@ -38,7 +38,7 @@ lawyer signs them off.
 
 ## Questions for the lawyer
 
-1. **"Open source".** The repository is public, but it has **no licence file**. Without one, the code is public to read, not open source in the legal sense, and the Terms call it open source. Choose a licence (MIT, Apache 2.0, AGPL) or change the wording.
+1. **Licence.** The repository is under the **GNU AGPL v3** (`LICENSE`, `"license": "AGPL-3.0-only"` in `package.json`), so the Terms' "open source" wording is accurate. Under AGPL section 13, anyone using a modified hosted copy must be offered its source, which is why the footer links to the repository. Two things to confirm: that you hold the copyright to everything in the repo (including anything you accept from contributors later, so consider a contributor agreement), and how the AGPL sits with charging for features in future. It allows selling, but a modified hosted version must publish its source.
 2. **Response times.** The text promises acknowledgement in 24 hours, resolution in 15 days, and 72 hours for urgent privacy or impersonation reports. As I read the IT Rules, 2021, complaints about intimate images or impersonation may need action within **24 hours**, and 72 hours relates to helping government agencies. Confirm before launch, and confirm one person can staff it.
 3. **A ₹0 liability cap and release (Terms 7).** Confirm what holds against consumers, whether a statement that a cap is zero is acceptable, and that an indemnity from users is fine.
 4. **Intermediary status** under Section 79 depends on how you behave (due diligence, takedown on notice). Confirm that the admin hold and review features support that.
