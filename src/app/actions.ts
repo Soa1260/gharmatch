@@ -2,7 +2,6 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { signOut } from "@/auth";
 import { ZodError } from "zod";
 import { blockUser, clearTrustedContact, fileReport, saveProfile, saveTrustedContact } from "@/server/account";
 import { getDb } from "@/server/db";
@@ -19,12 +18,6 @@ export interface FormState {
   error?: string;
   fieldErrors?: Record<string, string>;
   ok?: string;
-}
-
-/** TEST ONLY: the header Sign out button. Does nothing in production, where sign-out lives on /account. Remove before launch (docs/LAUNCH.md). */
-export async function testSignOutAction(): Promise<void> {
-  if (process.env.NODE_ENV === "production") return;
-  await signOut({ redirectTo: "/" });
 }
 
 const limiter = () => new PostgresRateLimiter(getDb());
