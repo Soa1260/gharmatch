@@ -153,7 +153,10 @@ export default async function Dashboard() {
                 </div>
               ) : null}
               {agreedRules.get(id) ? <AgreedRulesCard agreed={agreedRules.get(id)!} /> : null}
-              {allInterests.find((x) => x.id === id)?.viewerIsTenant ? <div className="w-full"><VisitPlanner interestId={id} /></div> : null}
+              {allInterests.find((x) => x.id === id)?.viewerIsTenant && allInterests.find((x) => x.id === id)?.listingOpen ? <div className="w-full"><VisitPlanner interestId={id} /></div> : null}
+              {allInterests.find((x) => x.id === id)?.viewerIsTenant && !allInterests.find((x) => x.id === id)?.listingOpen ? (
+                <p className="w-full text-xs text-faint">This home is not available for new visits right now.</p>
+              ) : null}
             </li>
           ))}
         </ul>
