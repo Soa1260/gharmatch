@@ -230,7 +230,10 @@ describe("guards and limits", () => {
 
   it("limits listing creation per day", async () => {
     const landlord = await makeUser(db, { isLandlord: true });
-    for (let i = 0; i < 5; i++) await createListing(db, limiter, landlord, validListing);
+    const made: string[] = [];
+    for (let i = 0; i < 5; i++) made.push((await createListing(db, limiter, landlord, validListing)).id);
+    // Five live homes is the cap, so free a place first. Deleting and reposting must still run into the daily limit.
+    await setListingStatus(db, landlord, made[0] as string, "DELETED");
     await expect(createListing(db, limiter, landlord, validListing)).rejects.toMatchObject({ code: "RATE_LIMITED" });
   });
 

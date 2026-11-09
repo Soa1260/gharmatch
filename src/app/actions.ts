@@ -74,6 +74,7 @@ function listingFromForm(f: FormData) {
     noPrivateCameras: bool(f, "noPrivateCameras"), occupancyNote: str(f, "occupancyNote") || undefined,
     ownerLivesOnSite: bool(f, "ownerLivesOnSite"), keyHolders: str(f, "keyHolders"),
     ownerAccess: str(f, "ownerAccess"), noticeHours: int(f, "noticeHours"),
+    postedBy: str(f, "postedBy"), declareAuthorised: bool(f, "declareAuthorised"),
   };
 }
 

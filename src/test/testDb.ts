@@ -83,6 +83,8 @@ export const validListing = {
   parking: "TWO_WHEELER",
   wfhAllowed: true,
   maxOccupants: 3,
+  postedBy: "OWNER",
+  declareAuthorised: true,
 };
 
 export const validRequirement = {

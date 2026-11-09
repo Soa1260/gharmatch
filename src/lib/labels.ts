@@ -45,6 +45,18 @@ export const label = {
     WITH_CONSENT: "Owner enters only with the tenant's consent",
     EMERGENCY_ONLY: "Owner enters only in an emergency",
   },
+  postedBy: {
+    OWNER: "I am the owner",
+    FAMILY_MEMBER: "I am the owner's family member",
+    CARETAKER: "I am the caretaker",
+    AGENT: "I am an authorised agent",
+  },
+  postedByPublic: {
+    OWNER: "Posted by the owner",
+    FAMILY_MEMBER: "Posted by the owner's family member",
+    CARETAKER: "Posted by the caretaker",
+    AGENT: "Posted by an agent acting for the owner",
+  },
   ownershipDoc: {
     PROPERTY_TAX_RECEIPT: "municipal property-tax receipt",
     UTILITY_BILL: "utility bill",
@@ -60,6 +72,7 @@ export const label = {
     PROPERTY_SAFETY_VIOLATION: "Property is unsafe or not as described",
     SUSPICIOUS_REPRESENTATIVE: "Suspicious person acting for the owner",
     FINANCIAL_FRAUD: "Money fraud or asked for money early",
+    BROKER_OR_FEE: "Broker, or a fee was asked for",
     OCCUPANCY_VIOLATION: "Who lives here is not as disclosed",
     DISCRIMINATION: "Discriminatory rules",
     OTHER: "Something else",

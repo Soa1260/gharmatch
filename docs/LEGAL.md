@@ -14,6 +14,7 @@ lawyer signs them off.
 | We do not keep copies of IDs or ownership papers | Checks store a type and a date only (`identityCheckedAt`, `ownershipReviewedAt`, `Inspection`). No upload route exists for them. Do not ask people to email documents |
 | We do not keep Google's tokens | Cleared on every sign-in (`src/auth.ts`) |
 | Phone required to rent out a home | Profile schema and the listing service (`requirePhoneForLandlord`) |
+| No brokers, no fees (Terms 1.3A) | Each home needs a "posted by" choice and a declaration (`Listing.postedBy`, `authorisationDeclaredAt`, `requireDeclaration`); at most 5 live or paused homes per account (`MAX_LIVE_LISTINGS`, also checked when a home is brought back); tenants can report "Broker, or a fee was asked for". The app cannot prove who an owner is, so this rests on the declaration, reports and the daily check of `/admin/reports` |
 | Account deletion scrubs personal data, shell removed after 30 days | `src/server/deletion.ts`, daily job |
 | Usage counts carry no identifiers | `Event` table has a name and a time only |
 | Phone and email kept out of logs | Prisma omits them by default; services select them explicitly |

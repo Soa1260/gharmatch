@@ -161,6 +161,10 @@ model Listing {
   ownershipDocType String?
   securityFeatures String[]
   boostedUntil     DateTime?
+  /** OWNER, FAMILY_MEMBER, CARETAKER or AGENT. Shown on the listing. */
+  postedBy         String        @default("OWNER")
+  /** When the poster confirmed they own the home or are authorised by the owner, and take no fee from tenants. */
+  authorisationDeclaredAt DateTime?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
