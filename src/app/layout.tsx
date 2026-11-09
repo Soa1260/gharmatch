@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, DM_Mono, Manrope } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { MotionRoot } from "@/components/motion/MotionRoot";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Footer />
         </MotionRoot>
+        <Analytics />
       </body>
     </html>
   );

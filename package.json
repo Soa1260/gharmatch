@@ -21,6 +21,7 @@
     "@auth/prisma-adapter": "^2.11.3",
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
+    "@vercel/analytics": "^2.0.1",
     "aws4fetch": "^1.0.20",
     "dotenv": "^18.0.9",
     "motion": "^14.10.1",
