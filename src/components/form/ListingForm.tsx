@@ -44,6 +44,9 @@ export interface ListingValues {
   keyHolders: string;
   ownerAccess: string;
   noticeHours: number;
+  postedBy: string;
+  /** True once the poster has confirmed they may let the home. Not asked again on every edit. */
+  authorisationDeclared: boolean;
 }
 
 function Section({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
@@ -135,6 +138,18 @@ export function ListingForm({ initial }: { initial?: ListingValues }) {
         <TextInput name="cctvLocations" label="If you ticked CCTV: where are the cameras" hint="Common areas only, for example: main gate, parking, lift lobby." maxLength={200} defaultValue={initial?.cctvLocations ?? undefined} error={e.cctvLocations} />
         <TextInput name="cctvAccess" label="If you ticked CCTV: who can see the recordings" hint="For example: society committee only, kept for 30 days." maxLength={200} defaultValue={initial?.cctvAccess ?? undefined} error={e.cctvAccess} />
         <Pills name="noPrivateCameras" label="There are no cameras in any bedroom, bathroom or other private space" options={yesNo} defaultValue={["no"]} error={e.noPrivateCameras} />
+      </Section>
+
+      <Section n="06" title="Who is posting">
+        <Pills name="postedBy" label="You are posting this home as" options={opts(label.postedBy)} defaultValue={[initial?.postedBy ?? "OWNER"]} error={e.postedBy} />
+        <Pills
+          name="declareAuthorised"
+          label="I own this home or the owner has authorised me to let it, and I will not take any fee, commission or token money from tenants"
+          options={yesNo}
+          defaultValue={[initial?.authorisationDeclared ? "yes" : "no"]}
+          error={e.declareAuthorised}
+        />
+        <p className="max-w-lg text-sm text-faint">Gharmatch is not for brokers. Tenants can report a listing that asks for a fee, and listings that do are removed.</p>
       </Section>
 
       <div className="space-y-4 border-t border-line pt-10">

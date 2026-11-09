@@ -37,7 +37,7 @@ function sampleDetail(slug: string): Detail | null {
     dietPolicy: s.dietPolicy, tenantTypes: ["FAMILY", "BACHELORS", "WORKING_WOMEN"], genderPolicy: s.genderPolicy,
     securityFeatures: s.securityFeatures, pets: "CASE_BY_CASE", smoking: "OUTDOORS_ONLY", alcohol: "NOT_ALLOWED",
     visitors: "DAYTIME_ONLY", quietHours: "After 10 pm", minLeaseMonths: 11, noticeDays: 30, parking: "TWO_WHEELER",
-    wfhAllowed: true, maxOccupants: 3, lastConfirmedAt: new Date(), photos: [],
+    wfhAllowed: true, maxOccupants: 3, lastConfirmedAt: new Date(), postedBy: "OWNER", photos: [],
     cctvLocations: "Main gate and parking (sample)", cctvAccess: "Society committee only (sample)", occupancyNote: "Sample text: two other tenants in the building, all families.",
     ownerLivesOnSite: false, keyHolders: "TENANT_ONLY", ownerAccess: "WITH_NOTICE", noticeHours: 24,
     locationStatus: "MATCHES_AREA", locationCheckedAt: new Date(), ownershipReviewedAt: null, ownershipDocType: null,
@@ -105,6 +105,10 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
           <p className="mt-6 font-mono text-3xl">{inr(l.rent)}<span className="text-base text-faint"> / month</span></p>
           <p className="mt-1 font-mono text-sm text-faint">Deposit {inr(l.deposit)} · Available {l.availableFrom.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
           <p className="mt-8 max-w-2xl whitespace-pre-line text-[17px] leading-relaxed text-soft">{l.description}</p>
+          <p className="mt-6 text-sm text-faint">
+            {pick(label.postedByPublic, l.postedBy)}.
+            {l.postedBy === "AGENT" ? " No fee or commission is allowed. Never pay anyone before you have seen the home, and report a request for money." : ""}
+          </p>
 
           <h2 className="index mt-14">House rules</h2>
           <dl className="mt-4 divide-y divide-line border-y border-line">

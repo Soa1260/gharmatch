@@ -8,7 +8,7 @@
  */
 
 /** Bump when either document changes in a way that needs people to agree again. */
-export const POLICY_VERSION = "2026-11-09.3";
+export const POLICY_VERSION = "2026-11-09.4";
 export const POLICY_UPDATED = "9 November 2026";
 
 export const TO_FILL = "[to be filled before launch]";

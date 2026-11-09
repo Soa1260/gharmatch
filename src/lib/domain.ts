@@ -55,8 +55,14 @@ export const SECURITY_FEATURES = [
 export const ASSESSMENT_ITEMS = SECURITY_FEATURES.filter((f) => f !== "FEMALE_CARETAKER");
 export const REPORT_CATEGORIES = [
   "NEED_HELP", "PHYSICAL_THREAT_STALKING", "UNAUTHORIZED_ENTRY", "LANDLORD_HARASSMENT", "UNDISCLOSED_SURVEILLANCE",
-  "PROPERTY_SAFETY_VIOLATION", "SUSPICIOUS_REPRESENTATIVE", "FINANCIAL_FRAUD", "OCCUPANCY_VIOLATION", "DISCRIMINATION", "OTHER",
+  "PROPERTY_SAFETY_VIOLATION", "SUSPICIOUS_REPRESENTATIVE", "FINANCIAL_FRAUD", "BROKER_OR_FEE", "OCCUPANCY_VIOLATION", "DISCRIMINATION", "OTHER",
 ] as const;
+
+/** Who is posting the home. Shown on the listing so a tenant knows who they are dealing with. */
+export const POSTED_BY = ["OWNER", "FAMILY_MEMBER", "CARETAKER", "AGENT"] as const;
+export type PostedBy = (typeof POSTED_BY)[number];
+/** One account can have at most this many homes live or paused at once. Stops one account running a whole portfolio. */
+export const MAX_LIVE_LISTINGS = 5;
 
 export type Severity = "CRITICAL" | "HIGH" | "MEDIUM";
 
@@ -73,6 +79,7 @@ export const REPORT_SEVERITY: Record<(typeof REPORT_CATEGORIES)[number], Severit
   PROPERTY_SAFETY_VIOLATION: "HIGH",
   SUSPICIOUS_REPRESENTATIVE: "HIGH",
   FINANCIAL_FRAUD: "HIGH",
+  BROKER_OR_FEE: "MEDIUM",
   OCCUPANCY_VIOLATION: "MEDIUM",
   DISCRIMINATION: "MEDIUM",
   OTHER: "MEDIUM",

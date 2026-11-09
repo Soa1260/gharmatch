@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
   AREAS, CITIES, DIET_POLICIES, FURNISHING, GENDER_POLICIES, HABIT_POLICIES, KEY_HOLDERS, OCCUPANT_GROUPS, OWNER_ACCESS, PARKING,
-  PET_POLICIES, SECURITY_FEATURES, TENANT_DIETS, TENANT_TYPES, VISITOR_POLICIES, REPORT_CATEGORIES,
+  PET_POLICIES, POSTED_BY, SECURITY_FEATURES, TENANT_DIETS, TENANT_TYPES, VISITOR_POLICIES, REPORT_CATEGORIES,
 } from "./domain";
 import { asksForMoney, containsContactInfo } from "./safety";
 import { GUARD_MESSAGE, checkText } from "./textGuard";
@@ -62,6 +62,9 @@ export const listingSchema = z
     keyHolders: z.enum(KEY_HOLDERS),
     ownerAccess: z.enum(OWNER_ACCESS),
     noticeHours: z.number().int().min(0).max(168),
+    postedBy: z.enum(POSTED_BY),
+    // Checked by the service, because an edit of a home that already carries the declaration does not need it again.
+    declareAuthorised: z.boolean().default(false),
   })
   .refine((v) => (AREAS[v.city] as readonly string[]).includes(v.area), { path: ["area"], message: "Choose an area from the list." })
   .refine((v) => !v.securityFeatures.includes("CCTV") || (v.cctvLocations && v.cctvAccess), {

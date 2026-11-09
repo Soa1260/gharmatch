@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { LISTING_LIFETIME_DAYS, PAGE_SIZE, type City } from "@/lib/domain";
+import { LISTING_LIFETIME_DAYS, MAX_LIVE_LISTINGS, PAGE_SIZE, type City } from "@/lib/domain";
 import { listingSchema, type ListingInput } from "@/lib/schemas";
 import { scamSignals } from "@/lib/safety";
 import { approximate, checkLocation } from "@/lib/location";
@@ -32,6 +32,28 @@ function requirePhoneForLandlord(_input: ListingInput, hasPhone: boolean) {
   }
 }
 
+const DECLARATION_MESSAGE =
+  "Tick the box to confirm you own this home or are authorised by the owner to let it, and that you will not take any fee or commission from tenants.";
+
+/** A poster must confirm, once per home, that they may let it and charge tenants nothing. */
+function requireDeclaration(input: ListingInput, alreadyDeclared: boolean) {
+  if (!alreadyDeclared && !input.declareAuthorised) throw new AppError("INVALID", DECLARATION_MESSAGE);
+}
+
+/** Counts homes that are live or paused. Expired and deleted homes do not count. `exceptId` leaves one home out. */
+async function liveCount(db: Db, ownerId: string, exceptId?: string) {
+  return db.listing.count({ where: { ownerId, status: { in: ["ACTIVE", "PAUSED"] }, ...(exceptId ? { id: { not: exceptId } } : {}) } });
+}
+
+function requireRoom(count: number) {
+  if (count >= MAX_LIVE_LISTINGS) {
+    throw new AppError(
+      "FORBIDDEN",
+      `One account can have up to ${MAX_LIVE_LISTINGS} homes live or paused at a time. Delete one you no longer need first. If you manage more homes, write to us.`,
+    );
+  }
+}
+
 type Resolver = typeof resolveLocation;
 
 /**
@@ -53,9 +75,10 @@ async function locate(input: ListingInput, resolver: Resolver) {
 }
 
 function toData(input: ListingInput) {
-  const { mapsLink: _mapsLink, noPrivateCameras: _noPrivateCameras, ...rest } = input;
+  const { mapsLink: _mapsLink, noPrivateCameras: _noPrivateCameras, declareAuthorised: _declareAuthorised, ...rest } = input;
   void _mapsLink;
   void _noPrivateCameras;
+  void _declareAuthorised;
   return rest;
 }
 
@@ -66,6 +89,8 @@ export async function createListing(db: Db, limiter: RateLimiter, actor: Actor |
   // Looking up a map link is the costly part, so it has its own, looser limit.
   const input = listingSchema.parse(raw);
   requirePhoneForLandlord(input, user.hasPhoneOnFile);
+  requireDeclaration(input, false);
+  requireRoom(await liveCount(db, user.id));
   await enforce(limiter, "locate", user.id);
   const { point, status } = await locate(input, resolver);
   await enforce(limiter, "createListing", user.id);
@@ -83,6 +108,7 @@ export async function createListing(db: Db, limiter: RateLimiter, actor: Actor |
           lng: point.lng,
           locationStatus: status,
           locationCheckedAt: new Date(),
+          authorisationDeclaredAt: new Date(),
           flagged: guardFlag(input) || status === "FAR_FROM_AREA",
         },
         select: { id: true, slug: true },
@@ -95,7 +121,10 @@ export async function createListing(db: Db, limiter: RateLimiter, actor: Actor |
 }
 
 async function ownedListing(db: Db, userId: string, listingId: string) {
-  const listing = await db.listing.findUnique({ where: { id: listingId }, select: { id: true, ownerId: true, status: true, flagged: true } });
+  const listing = await db.listing.findUnique({
+    where: { id: listingId },
+    select: { id: true, ownerId: true, status: true, flagged: true, authorisationDeclaredAt: true },
+  });
   if (!listing || listing.ownerId !== userId || listing.status === "DELETED") {
     throw new AppError("NOT_FOUND", "Listing not found.");
   }
@@ -111,11 +140,13 @@ export async function updateListing(db: Db, actor: Actor | null, listingId: stri
   const existing = await ownedListing(db, user.id, listingId);
   const input = listingSchema.parse(raw);
   requirePhoneForLandlord(input, user.hasPhoneOnFile);
+  requireDeclaration(input, existing.authorisationDeclaredAt !== null);
   const { point, status } = await locate(input, resolver);
   return db.listing.update({
     where: { id: listingId },
     data: {
       ...toData(input),
+      ...(existing.authorisationDeclaredAt === null ? { authorisationDeclaredAt: new Date() } : {}),
       lat: point.lat,
       lng: point.lng,
       locationStatus: status,
@@ -129,6 +160,8 @@ export async function updateListing(db: Db, actor: Actor | null, listingId: stri
 export async function setListingStatus(db: Db, actor: Actor | null, listingId: string, status: "ACTIVE" | "PAUSED" | "DELETED") {
   const user = await requireActiveUser(db, actor);
   await ownedListing(db, user.id, listingId);
+  // Bringing a home back (from paused or expired) counts against the cap like a new one, so the cap cannot be sidestepped.
+  if (status === "ACTIVE") requireRoom(await liveCount(db, user.id, listingId));
   const data =
     status === "ACTIVE"
       ? { status, lastConfirmedAt: new Date(), expiresAt: new Date(Date.now() + LISTING_LIFETIME_DAYS * DAY_MS) }
@@ -162,7 +195,7 @@ const publicSelect = {
   furnishing: true, availableFrom: true, description: true, dietPolicy: true, tenantTypes: true,
   genderPolicy: true, securityFeatures: true, pets: true, smoking: true, alcohol: true, visitors: true,
   quietHours: true, minLeaseMonths: true, noticeDays: true, parking: true, wfhAllowed: true, maxOccupants: true,
-  lastConfirmedAt: true,
+  lastConfirmedAt: true, postedBy: true,
   cctvLocations: true, cctvAccess: true, occupancyNote: true, ownerLivesOnSite: true, keyHolders: true,
   ownerAccess: true, noticeHours: true, locationStatus: true, locationCheckedAt: true,
   ownershipReviewedAt: true, ownershipDocType: true,
