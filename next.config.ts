@@ -31,6 +31,21 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // Maintenance mode (docs/MAINTENANCE.md). Off by default, and then this adds nothing at all. When MAINTENANCE_MODE=1
+  // at build time, every address is answered by the maintenance page, except Next's own files, the icons,
+  // robots.txt, the health check and the daily job.
+  async rewrites() {
+    if (process.env.MAINTENANCE_MODE !== "1") return [];
+    return {
+      beforeFiles: [
+        { source: "/", destination: "/maintenance" },
+        { source: "/api/:path((?!health$|cron/daily$).*)", destination: "/maintenance/json" },
+        { source: "/:path((?!_next/|api/|maintenance|icon\\.svg$|apple-icon\\.png$|favicon\\.ico$|robots\\.txt$).*)", destination: "/maintenance" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   // The old address sends everyone, with the same path, to the real domain. The daily cron path is left alone.
   async redirects() {
     return [

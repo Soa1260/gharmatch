@@ -99,7 +99,7 @@ All are validated in `src/lib/env.ts`. See `.env.example`.
 
 ## Docs
 
-`docs/LEGAL.md` what the code backs up, and open questions for a lawyer · `docs/INCIDENTS.md` response procedures · `docs/VERIFICATION.md` checks and inspections · `docs/SAFETY.md` what safety is built, what is not, and the staffing it needs · `docs/QA.md` manual checklist · `docs/LAUNCH.md` launch checklist · `docs/SEEDING.md` cold start · `docs/CLEANUP.md` clearing test data · `docs/REDDIT.md` posts · `docs/VALIDATION.md` 30-day numbers · `docs/RISKS.md` limitations and risks.
+`docs/LEGAL.md` what the code backs up, and open questions for a lawyer · `docs/INCIDENTS.md` response procedures · `docs/VERIFICATION.md` checks and inspections · `docs/SAFETY.md` what safety is built, what is not, and the staffing it needs · `docs/QA.md` manual checklist · `docs/LAUNCH.md` launch checklist · `docs/SEEDING.md` cold start · `docs/CLEANUP.md` clearing test data · `docs/MAINTENANCE.md` switching the maintenance page on and off · `docs/REDDIT.md` posts · `docs/VALIDATION.md` 30-day numbers · `docs/RISKS.md` limitations and risks.
 
 ## Reporting a problem
 
