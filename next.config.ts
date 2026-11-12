@@ -31,6 +31,17 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // The old address sends everyone, with the same path, to the real domain. The daily cron path is left alone.
+  async redirects() {
+    return [
+      {
+        source: "/:path((?!api/cron).*)",
+        has: [{ type: "host", value: "gharmatch.vercel.app" }],
+        destination: "https://gharmatch.space/:path",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

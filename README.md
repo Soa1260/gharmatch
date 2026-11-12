@@ -2,7 +2,7 @@
 
 **Rentals in Ahmedabad and Gandhinagar, matched on house rules.**
 
-🌐 **Live:** [gharmatch.vercel.app](https://gharmatch.vercel.app) · Free · Open source (AGPL v3) · No broker fee
+🌐 **Live:** [gharmatch.space](https://gharmatch.space) · Free · Open source (AGPL v3) · No broker fee
 
 Finding a rental here often means brokers, endless calls, and learning after a day that the flat is "veg only" or "no bachelors". Gharmatch puts the house rules first. Landlords state their rules, tenants state their needs, and the app shows the fit and any clash before anyone messages.
 
@@ -22,7 +22,7 @@ Finding a rental here often means brokers, endless calls, and learning after a d
 - **Not for brokers.** Each home says who posted it (owner, family member, caretaker or agent) and needs a declaration that the poster may let it and takes no fee. One account can hold at most 5 live or paused homes, and tenants can report "Broker, or a fee was asked for".
 - **Google sign-in only,** so every post and report belongs to a real account. Landlords must have a mobile number on file.
 
-Checks and badges are point-in-time records, not guarantees. See the [Terms](https://gharmatch.vercel.app/terms) and [Privacy Policy](https://gharmatch.vercel.app/privacy).
+Checks and badges are point-in-time records, not guarantees. See the [Terms](https://gharmatch.space/terms) and [Privacy Policy](https://gharmatch.space/privacy).
 
 ## Tech
 
@@ -104,7 +104,7 @@ All are validated in `src/lib/env.ts`. See `.env.example`.
 ## Reporting a problem
 
 - **Unsafe or fraudulent listing:** use the Report button on the listing.
-- **Privacy or legal concerns:** write to the grievance contact named on the [Terms](https://gharmatch.vercel.app/terms#grievance) page.
+- **Privacy or legal concerns:** write to the grievance contact named on the [Terms](https://gharmatch.space/terms#grievance) page.
 - **Security issue in the code:** please email the grievance contact rather than opening a public issue.
 - **Bugs and ideas:** [open an issue](https://github.com/Soa1260/gharmatch/issues).
 
