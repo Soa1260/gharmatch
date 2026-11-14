@@ -30,7 +30,7 @@ export default async function EditListing({ params }: { params: Promise<{ slug: 
     mapsLink: l.lat != null && l.lng != null ? `${l.lat}, ${l.lng}` : "", addressLine: l.addressLine ?? "",
     cctvLocations: l.cctvLocations, cctvAccess: l.cctvAccess, occupancyNote: l.occupancyNote,
     ownerLivesOnSite: l.ownerLivesOnSite, keyHolders: l.keyHolders, ownerAccess: l.ownerAccess, noticeHours: l.noticeHours,
-    postedBy: l.postedBy, authorisationDeclared: l.authorisationDeclaredAt !== null,
+    postedBy: l.postedBy, screeningQuestions: l.screeningQuestions, requestsFrom: l.requestsFrom, authorisationDeclared: l.authorisationDeclaredAt !== null,
   };
 
   return (

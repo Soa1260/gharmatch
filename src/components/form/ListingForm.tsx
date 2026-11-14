@@ -45,6 +45,8 @@ export interface ListingValues {
   ownerAccess: string;
   noticeHours: number;
   postedBy: string;
+  screeningQuestions: string[];
+  requestsFrom: string;
   /** True once the poster has confirmed they may let the home. Not asked again on every edit. */
   authorisationDeclared: boolean;
 }
@@ -150,6 +152,22 @@ export function ListingForm({ initial }: { initial?: ListingValues }) {
           error={e.declareAuthorised}
         />
         <p className="max-w-lg text-sm text-faint">Gharmatch is not for brokers. Tenants can report a listing that asks for a fee, and listings that do are removed.</p>
+      </Section>
+
+      <Section n="07" title="Who can write to you">
+        <Pills name="requestsFrom" label="Accept requests from" options={opts(label.requestsFrom)} defaultValue={[initial?.requestsFrom ?? "ANYONE"]} error={e.requestsFrom} />
+        <p className="max-w-lg text-sm text-faint">“Accounts at least a week old” keeps out accounts made just to send messages. “ID checked” is the strictest and few people have it yet, so most tenants will not be able to write. You can change this at any time.</p>
+        {[0, 1, 2].map((i) => (
+          <TextInput
+            key={i}
+            name="screeningQuestion"
+            label={`Question ${i + 1} for tenants (optional)`}
+            hint={i === 0 ? "Asked before they can send interest. For example: How many people will live here? When do you want to move in? Never ask about religion, caste or community, or for money." : undefined}
+            maxLength={120}
+            defaultValue={initial?.screeningQuestions[i] ?? undefined}
+            error={e[`screeningQuestions.${i}`]}
+          />
+        ))}
       </Section>
 
       <div className="space-y-4 border-t border-line pt-10">

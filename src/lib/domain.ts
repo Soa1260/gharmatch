@@ -64,6 +64,16 @@ export type PostedBy = (typeof POSTED_BY)[number];
 /** One account can have at most this many homes live or paused at once. Stops one account running a whole portfolio. */
 export const MAX_LIVE_LISTINGS = 5;
 
+/** Who may send interest to a home. ESTABLISHED needs an account at least ESTABLISHED_ACCOUNT_DAYS old. */
+export const REQUESTS_FROM = ["ANYONE", "ESTABLISHED", "ID_CHECKED"] as const;
+export type RequestsFrom = (typeof REQUESTS_FROM)[number];
+export const ESTABLISHED_ACCOUNT_DAYS = 7;
+export const MAX_SCREENING_QUESTIONS = 3;
+/** A home stops taking new requests while this many wait for an answer, so a landlord's inbox cannot be flooded. */
+export const MAX_PENDING_PER_LISTING = 25;
+/** One tenant can have this many requests waiting at once. Withdrawing or an answer frees a place. */
+export const MAX_PENDING_PER_TENANT = 10;
+
 export type Severity = "CRITICAL" | "HIGH" | "MEDIUM";
 
 /**

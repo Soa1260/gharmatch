@@ -20,6 +20,7 @@ Finding a rental here often means brokers, endless calls, and learning after a d
   - Visit planning with check-in and check-out, a trusted contact, and emergency numbers one tap away.
   - A saved copy of the agreed house rules is kept when a match is accepted, for fair dispute handling.
 - **Not for brokers.** Each home says who posted it (owner, family member, caretaker or agent) and needs a declaration that the poster may let it and takes no fee. One account can hold at most 5 live or paused homes, and tenants can report "Broker, or a fee was asked for".
+- **Tools for landlords.** Each request shows a plain "about this account" card (account age, whether our team checked their ID, upheld safety reports) and the answers to up to three questions the landlord sets. A home can accept requests from anyone, accounts at least a week old, or ID-checked people only. A home pauses new requests while 25 wait, one tenant can have 10 waiting, and a landlord can block from any request. Landlords also get a share-my-plan button and tips for showing a home safely.
 - **Google sign-in only,** so every post and report belongs to a real account. Landlords must have a mobile number on file.
 
 Checks and badges are point-in-time records, not guarantees. See the [Terms](https://gharmatch.space/terms) and [Privacy Policy](https://gharmatch.space/privacy).

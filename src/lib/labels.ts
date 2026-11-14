@@ -51,6 +51,11 @@ export const label = {
     CARETAKER: "I am the caretaker",
     AGENT: "I am an authorised agent",
   },
+  requestsFrom: {
+    ANYONE: "Anyone with an account",
+    ESTABLISHED: "Accounts at least a week old",
+    ID_CHECKED: "Only people whose ID we have checked",
+  },
   postedByPublic: {
     OWNER: "Posted by the owner",
     FAMILY_MEMBER: "Posted by the owner's family member",

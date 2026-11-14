@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
   AREAS, CITIES, DIET_POLICIES, FURNISHING, GENDER_POLICIES, HABIT_POLICIES, KEY_HOLDERS, OCCUPANT_GROUPS, OWNER_ACCESS, PARKING,
-  PET_POLICIES, POSTED_BY, SECURITY_FEATURES, TENANT_DIETS, TENANT_TYPES, VISITOR_POLICIES, REPORT_CATEGORIES,
+  PET_POLICIES, POSTED_BY, MAX_SCREENING_QUESTIONS, REQUESTS_FROM, SECURITY_FEATURES, TENANT_DIETS, TENANT_TYPES, VISITOR_POLICIES, REPORT_CATEGORIES,
 } from "./domain";
 import { asksForMoney, containsContactInfo } from "./safety";
 import { GUARD_MESSAGE, checkText } from "./textGuard";
@@ -65,6 +65,8 @@ export const listingSchema = z
     postedBy: z.enum(POSTED_BY),
     // Checked by the service, because an edit of a home that already carries the declaration does not need it again.
     declareAuthorised: z.boolean().default(false),
+    screeningQuestions: z.array(messageText(5, 120).refine((v) => !asksForMoney(v), { message: "Do not ask about payments. Money must never move before the home is seen." })).max(MAX_SCREENING_QUESTIONS).default([]),
+    requestsFrom: z.enum(REQUESTS_FROM).default("ANYONE"),
   })
   .refine((v) => (AREAS[v.city] as readonly string[]).includes(v.area), { path: ["area"], message: "Choose an area from the list." })
   .refine((v) => !v.securityFeatures.includes("CCTV") || (v.cctvLocations && v.cctvAccess), {
@@ -114,6 +116,8 @@ export const interestMessageSchema = z.object({
     message: "Please do not discuss payments here. Never pay before you have seen the home in person.",
   }),
   acknowledgeConflicts: z.boolean().default(false),
+  /** One answer per screening question the home asks, in the same order. */
+  answers: z.array(messageText(1, 200).refine((v) => !asksForMoney(v), { message: "Please do not discuss payments here." })).max(MAX_SCREENING_QUESTIONS).default([]),
 });
 
 export const reportSchema = z.object({

@@ -51,6 +51,17 @@ export async function blockUser(db: Db, actor: Actor | null, targetId: string) {
   });
 }
 
+/** The people you blocked. Only the date is shown, because naming someone a woman blocked before they replied would undo their privacy. */
+export async function listBlocked(db: Db, actor: Actor | null) {
+  const user = await requireActiveUser(db, actor);
+  return db.block.findMany({ where: { blockerId: user.id }, select: { id: true, createdAt: true }, orderBy: { createdAt: "desc" }, take: 50 });
+}
+
+export async function unblockById(db: Db, actor: Actor | null, blockId: string) {
+  const user = await requireActiveUser(db, actor);
+  await db.block.deleteMany({ where: { id: blockId, blockerId: user.id } });
+}
+
 export async function unblockUser(db: Db, actor: Actor | null, targetId: string) {
   const user = await requireActiveUser(db, actor);
   await db.block.deleteMany({ where: { blockerId: user.id, blockedId: targetId } });

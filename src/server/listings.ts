@@ -18,7 +18,7 @@ function slugFor(title: string): string {
 }
 
 function guardFlag(input: ListingInput): boolean {
-  const text = [input.title, input.description, input.quietHours ?? "", input.addressLine, input.occupancyNote ?? ""].join(" \n ");
+  const text = [input.title, input.description, input.quietHours ?? "", input.addressLine, input.occupancyNote ?? "", ...input.screeningQuestions].join(" \n ");
   return checkText(text).verdict === "flag" || scamSignals(text).length > 0;
 }
 
@@ -195,7 +195,7 @@ const publicSelect = {
   furnishing: true, availableFrom: true, description: true, dietPolicy: true, tenantTypes: true,
   genderPolicy: true, securityFeatures: true, pets: true, smoking: true, alcohol: true, visitors: true,
   quietHours: true, minLeaseMonths: true, noticeDays: true, parking: true, wfhAllowed: true, maxOccupants: true,
-  lastConfirmedAt: true, postedBy: true,
+  lastConfirmedAt: true, postedBy: true, screeningQuestions: true, requestsFrom: true,
   cctvLocations: true, cctvAccess: true, occupancyNote: true, ownerLivesOnSite: true, keyHolders: true,
   ownerAccess: true, noticeHours: true, locationStatus: true, locationCheckedAt: true,
   ownershipReviewedAt: true, ownershipDocType: true,

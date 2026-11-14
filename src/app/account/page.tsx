@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { signOut } from "@/auth";
 import { TrustedContactForm } from "@/components/form/TrustedContactForm";
+import { unblockAction } from "@/app/actions";
+import { listBlocked } from "@/server/account";
 import { getDb } from "@/server/db";
 import { deleteAccount } from "@/server/deletion";
 import { currentActor, requireOnboarded } from "@/server/session";
@@ -13,6 +15,7 @@ export default async function Account() {
     where: { id: me.id },
     select: { trustedContactName: true, trustedContactPhone: true },
   });
+  const blocked = await listBlocked(getDb(), { id: me.id });
   const trusted = saved?.trustedContactName && saved.trustedContactPhone ? { name: saved.trustedContactName, phone: saved.trustedContactPhone } : null;
 
   async function remove(f: FormData) {
@@ -43,6 +46,21 @@ export default async function Account() {
           <TrustedContactForm current={trusted} />
         </div>
       </section>
+
+      {blocked.length > 0 ? (
+        <section className="mt-16">
+          <h2 className="font-display text-2xl font-semibold tracking-tight">People you blocked</h2>
+          <p className="mt-3 max-w-lg text-sm leading-relaxed text-soft">Blocked people cannot write to you or see your details, and you cannot see theirs. Only the date is shown here, to protect everyone&apos;s privacy. Unblock only if you blocked by mistake.</p>
+          <ul className="mt-6 space-y-3">
+            {blocked.map((b, i) => (
+              <li key={b.id} className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-surface p-4 text-sm">
+                <span>Blocked person {blocked.length - i} <span className="font-mono text-xs text-faint">· {b.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span></span>
+                <form action={unblockAction}><input type="hidden" name="blockId" value={b.id} /><button className="h-9 rounded-full border border-line-strong px-4 hover:bg-raised">Unblock</button></form>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="mt-16 rounded-2xl border border-danger/40 p-7">
         <h2 className="font-display text-2xl font-semibold tracking-tight">Delete my account</h2>

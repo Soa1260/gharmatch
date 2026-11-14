@@ -37,7 +37,7 @@ function sampleDetail(slug: string): Detail | null {
     dietPolicy: s.dietPolicy, tenantTypes: ["FAMILY", "BACHELORS", "WORKING_WOMEN"], genderPolicy: s.genderPolicy,
     securityFeatures: s.securityFeatures, pets: "CASE_BY_CASE", smoking: "OUTDOORS_ONLY", alcohol: "NOT_ALLOWED",
     visitors: "DAYTIME_ONLY", quietHours: "After 10 pm", minLeaseMonths: 11, noticeDays: 30, parking: "TWO_WHEELER",
-    wfhAllowed: true, maxOccupants: 3, lastConfirmedAt: new Date(), postedBy: "OWNER", photos: [],
+    wfhAllowed: true, maxOccupants: 3, lastConfirmedAt: new Date(), postedBy: "OWNER", screeningQuestions: ["How many people will live here?"], requestsFrom: "ANYONE", photos: [],
     cctvLocations: "Main gate and parking (sample)", cctvAccess: "Society committee only (sample)", occupancyNote: "Sample text: two other tenants in the building, all families.",
     ownerLivesOnSite: false, keyHolders: "TENANT_ONLY", ownerAccess: "WITH_NOTICE", noticeHours: 24,
     locationStatus: "MATCHES_AREA", locationCheckedAt: new Date(), ownershipReviewedAt: null, ownershipDocType: null,
@@ -164,7 +164,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          {sample ? <p className="rounded-2xl border border-line p-6 text-sm text-soft">Matching is shown here on real listings.</p> : <MatchPanel listingId={l.id} slug={l.slug} />}
+          {sample ? <p className="rounded-2xl border border-line p-6 text-sm text-soft">Matching is shown here on real listings.</p> : <MatchPanel listingId={l.id} slug={l.slug} questions={l.screeningQuestions} requestsFrom={l.requestsFrom} />}
         </aside>
       </div>
     </main>

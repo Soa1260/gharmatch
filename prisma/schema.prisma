@@ -165,6 +165,10 @@ model Listing {
   postedBy         String        @default("OWNER")
   /** When the poster confirmed they own the home or are authorised by the owner, and take no fee from tenants. */
   authorisationDeclaredAt DateTime?
+  /** Up to three short questions the landlord asks every person who sends interest. */
+  screeningQuestions String[]    @default([])
+  /** ANYONE, ESTABLISHED (account at least a week old) or ID_CHECKED (identity checked by our team). */
+  requestsFrom     String        @default("ANYONE")
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
@@ -234,6 +238,8 @@ model Interest {
   respondedAt   DateTime?
   /** The home's house rules and disclosures at the moment of acceptance (JSON). Both parties can read it if there is a misunderstanding later. */
   matchSnapshot String?
+  /** The landlord's questions and the tenant's answers at the time of sending (JSON list of {q, a}). */
+  screening     String?
   createdAt     DateTime       @default(now())
 
   listing     Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)

@@ -1,8 +1,10 @@
 import type { DietPolicy, GenderPolicy, HabitPolicy, OccupantGroup, PetPolicy, TenantDiet, TenantType, City } from "@/lib/domain";
-import { PAGE_SIZE } from "@/lib/domain";
+import { MAX_PENDING_PER_LISTING, MAX_PENDING_PER_TENANT, PAGE_SIZE } from "@/lib/domain";
 import { matchListing, type ListingFacts, type RequirementFacts } from "@/lib/matching";
 import { canInvite, toBoardView } from "@/lib/safety";
 import { interestMessageSchema } from "@/lib/schemas";
+import { buildTenantTrust, parseScreening, requestRuleBlocks } from "@/lib/trust";
+import { blockUser } from "./account";
 import { isBlockedEitherWay, requireActiveUser, type Actor } from "./actor";
 import type { Db } from "./db";
 import { AppError, isUniqueViolation } from "./errors";
@@ -44,7 +46,7 @@ export function requirementFacts(r: RequirementRow): RequirementFacts {
 const listingMatchSelect = {
   id: true, ownerId: true, status: true, expiresAt: true, city: true, area: true, rent: true, availableFrom: true,
   dietPolicy: true, tenantTypes: true, pets: true, smoking: true, alcohol: true, minLeaseMonths: true,
-  maxOccupants: true, genderPolicy: true, securityFeatures: true,
+  maxOccupants: true, genderPolicy: true, securityFeatures: true, screeningQuestions: true, requestsFrom: true,
 } as const;
 
 const requirementMatchSelect = {
@@ -55,7 +57,7 @@ const requirementMatchSelect = {
 
 async function createInterest(
   db: Db,
-  data: { listingId: string; requirementId: string; origin: "TENANT" | "LANDLORD"; message: string },
+  data: { listingId: string; requirementId: string; origin: "TENANT" | "LANDLORD"; message: string; screening?: string },
 ) {
   try {
     const row = await db.interest.create({ data, select: { id: true } });
@@ -91,7 +93,29 @@ export async function sendInterest(
   if (result.hardConflicts.length > 0 && !input.acknowledgeConflicts) {
     throw new AppError("INVALID", `Please review the conflicts first: ${result.hardConflicts.map((c) => c.text).join(" ")}`);
   }
-  return createInterest(db, { listingId, requirementId, origin: "TENANT", message: input.message });
+
+  // The landlord's own filters, and limits that keep one inbox or one sender from being swamped.
+  const sender = await db.user.findUnique({ where: { id: user.id }, select: { createdAt: true, identityCheckedAt: true } });
+  if (!sender) throw new AppError("NOT_FOUND", "Search not found.");
+  const refused = requestRuleBlocks(listing, sender);
+  if (refused) throw new AppError("FORBIDDEN", refused);
+  const [waitingOnHome, waitingFromMe] = await Promise.all([
+    db.interest.count({ where: { listingId, origin: "TENANT", status: "PENDING" } }),
+    db.interest.count({ where: { origin: "TENANT", status: "PENDING", requirement: { tenantId: user.id } } }),
+  ]);
+  if (waitingOnHome >= MAX_PENDING_PER_LISTING) {
+    throw new AppError("FORBIDDEN", "This home already has many requests waiting for the landlord. Please try again in a few days.");
+  }
+  if (waitingFromMe >= MAX_PENDING_PER_TENANT) {
+    throw new AppError("FORBIDDEN", `You already have ${MAX_PENDING_PER_TENANT} requests waiting for an answer. Withdraw one or wait for a reply before sending more.`);
+  }
+
+  const questions = listing.screeningQuestions;
+  if (input.answers.length !== questions.length) {
+    throw new AppError("INVALID", questions.length === 1 ? "Please answer the landlord's question." : "Please answer all of the landlord's questions.");
+  }
+  const screening = questions.length > 0 ? JSON.stringify(questions.map((q, i) => ({ q, a: input.answers[i] as string }))) : undefined;
+  return createInterest(db, { listingId, requirementId, origin: "TENANT", message: input.message, screening });
 }
 
 export async function inviteTenant(
@@ -204,6 +228,13 @@ export async function getAgreedRules(db: Db, actor: Actor | null, interestId: st
   return parseAgreedRules(row.matchSnapshot);
 }
 
+/** Blocks the other person in a conversation, from the conversation itself, so their account id is never needed on the page. */
+export async function blockFromInterest(db: Db, actor: Actor | null, interestId: string) {
+  const user = await requireActiveUser(db, actor);
+  const party = await loadParty(db, user.id, interestId);
+  await blockUser(db, actor, party.senderId === user.id ? party.recipientId : party.senderId);
+}
+
 export async function withdrawInterest(db: Db, actor: Actor | null, interestId: string) {
   const user = await requireActiveUser(db, actor);
   const party = await loadParty(db, user.id, interestId);
@@ -223,7 +254,7 @@ export async function listMyInterests(db: Db, actor: Actor | null, box: "receive
   const rows = await db.interest.findMany({
     where: { AND: [mine, side] },
     select: {
-      id: true, origin: true, status: true, message: true, createdAt: true,
+      id: true, origin: true, status: true, message: true, screening: true, createdAt: true,
       listing: { select: { id: true, slug: true, title: true, area: true, ownerId: true, status: true, flagged: true } },
       requirement: {
         select: {
@@ -236,8 +267,39 @@ export async function listMyInterests(db: Db, actor: Actor | null, box: "receive
     take: PAGE_SIZE,
     ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
   });
+  // The trust card is for a landlord reading a request that a tenant sent to their home.
+  const forOwner = rows.filter((r) => r.origin === "TENANT" && r.listing.ownerId === user.id);
+  const tenantIds = [...new Set(forOwner.map((r) => r.requirement.tenantId))];
+  const requirementIds = [...new Set(forOwner.map((r) => r.requirement.id))];
+  const [people, upheld] =
+    tenantIds.length === 0
+      ? [[], []]
+      : await Promise.all([
+          db.user.findMany({ where: { id: { in: tenantIds } }, select: { id: true, createdAt: true, identityCheckedAt: true } }),
+          db.report.findMany({
+            where: {
+              status: "ACTIONED",
+              OR: [{ targetType: "USER", targetId: { in: tenantIds } }, { targetType: "REQUIREMENT", targetId: { in: requirementIds } }],
+            },
+            select: { targetType: true, targetId: true },
+            take: 200,
+          }),
+        ]);
+  const tenantOfRequirement = new Map(forOwner.map((r) => [r.requirement.id, r.requirement.tenantId]));
+  const upheldByTenant = new Map<string, number>();
+  for (const rep of upheld) {
+    const tenantId = rep.targetType === "USER" ? rep.targetId : tenantOfRequirement.get(rep.targetId);
+    if (tenantId) upheldByTenant.set(tenantId, (upheldByTenant.get(tenantId) ?? 0) + 1);
+  }
+  const personById = new Map(people.map((p) => [p.id, p]));
+
   return rows.map((r) => ({
     id: r.id, origin: r.origin, status: r.status, message: r.message, createdAt: r.createdAt,
+    screening: parseScreening(r.screening),
+    trust: (() => {
+      const person = r.origin === "TENANT" && r.listing.ownerId === user.id ? personById.get(r.requirement.tenantId) : undefined;
+      return person ? buildTenantTrust({ createdAt: person.createdAt, identityCheckedAt: person.identityCheckedAt, upheldReports: upheldByTenant.get(person.id) ?? 0 }) : null;
+    })(),
     listing: { id: r.listing.id, slug: r.listing.slug, title: r.listing.title, area: r.listing.area },
     /** Whether the home can still take visits: live, and not on a safety hold. */
     listingOpen: r.listing.status === "ACTIVE" && !r.listing.flagged,

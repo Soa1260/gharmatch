@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import { sendInterestAction, type FormState } from "@/app/actions";
 import { MatchRing } from "@/components/ui/MatchRing";
-import { FormMessage, SubmitButton, TextArea } from "@/components/form/Fields";
+import { FormMessage, SubmitButton, TextArea, TextInput } from "@/components/form/Fields";
 import type { MatchResult } from "@/lib/matching";
 
 interface Search {
@@ -18,7 +18,7 @@ const UNFIXABLE = new Set(["occupantGroup", "city", "tenantType"]);
 const initial: FormState = {};
 
 /** Shows the fit between this home and one of the visitor's own searches, before any message is sent. */
-export function MatchPanel({ listingId, slug }: { listingId: string; slug: string }) {
+export function MatchPanel({ listingId, slug, questions = [], requestsFrom = "ANYONE" }: { listingId: string; slug: string; questions?: string[]; requestsFrom?: string }) {
   const [data, setData] = useState<Payload | null>(null);
   const [pick, setPick] = useState(0);
   const [state, action] = useActionState(sendInterestAction, initial);
@@ -82,7 +82,15 @@ export function MatchPanel({ listingId, slug }: { listingId: string; slug: strin
         <form action={action} className="mt-6 space-y-4">
           <input type="hidden" name="listingId" value={listingId} />
           <input type="hidden" name="requirementId" value={s.id} />
+          {requestsFrom !== "ANYONE" ? (
+            <p className="rounded-xl border border-line px-4 py-3 text-sm text-soft">
+              {requestsFrom === "ID_CHECKED" ? "This landlord only takes requests from people whose ID our team has checked." : "This landlord only takes requests from accounts at least a week old."}
+            </p>
+          ) : null}
           <TextArea name="message" label="A short note to the landlord" hint="No phone numbers, emails or links. Contacts open after they accept." maxLength={400} required error={state.fieldErrors?.message} />
+          {questions.map((q, i) => (
+            <TextInput key={q} name="answer" label={q} hint={i === 0 ? "The landlord asks everyone this before replying." : undefined} maxLength={200} required error={state.fieldErrors?.[`answers.${i}`]} />
+          ))}
           {conflicts ? (
             <label className="flex items-start gap-3 text-sm text-soft">
               <input type="checkbox" name="acknowledgeConflicts" value="yes" required className="mt-1 size-4 accent-[var(--color-lamp)]" />

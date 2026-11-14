@@ -3,10 +3,10 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ZodError } from "zod";
-import { blockUser, clearTrustedContact, fileReport, saveProfile, saveTrustedContact } from "@/server/account";
+import { blockUser, clearTrustedContact, fileReport, saveProfile, saveTrustedContact, unblockById } from "@/server/account";
 import { getDb } from "@/server/db";
 import { AppError } from "@/server/errors";
-import { respondToInterest, sendInterest, inviteTenant, withdrawInterest } from "@/server/interests";
+import { blockFromInterest, respondToInterest, sendInterest, inviteTenant, withdrawInterest } from "@/server/interests";
 import { confirmStillAvailable, createListing, setListingStatus, updateListing } from "@/server/listings";
 import { PostgresRateLimiter } from "@/server/rateLimit";
 import { createRequirement, setRequirementStatus, updateRequirement } from "@/server/requirements";
@@ -75,6 +75,8 @@ function listingFromForm(f: FormData) {
     ownerLivesOnSite: bool(f, "ownerLivesOnSite"), keyHolders: str(f, "keyHolders"),
     ownerAccess: str(f, "ownerAccess"), noticeHours: int(f, "noticeHours"),
     postedBy: str(f, "postedBy"), declareAuthorised: bool(f, "declareAuthorised"),
+    screeningQuestions: list(f, "screeningQuestion").map((q) => q.trim()).filter(Boolean),
+    requestsFrom: str(f, "requestsFrom") || "ANYONE",
   };
 }
 
@@ -153,6 +155,7 @@ export async function sendInterestAction(_: FormState, f: FormData): Promise<For
     await sendInterest(getDb(), limiter(), await currentActor(), str(f, "listingId"), str(f, "requirementId"), {
       message: str(f, "message"),
       acknowledgeConflicts: bool(f, "acknowledgeConflicts"),
+      answers: list(f, "answer").map((a) => a.trim()),
     });
   } catch (e) {
     return toState(e);
@@ -218,6 +221,17 @@ export async function reportAction(_: FormState, f: FormData): Promise<FormState
 export async function blockAction(f: FormData) {
   await blockUser(getDb(), await currentActor(), str(f, "userId")).catch(() => undefined);
   revalidatePath("/dashboard");
+}
+
+/** Block from a waiting request, without needing the other person's account id on the page. */
+export async function blockFromInterestAction(f: FormData) {
+  await blockFromInterest(getDb(), await currentActor(), str(f, "interestId")).catch(() => undefined);
+  revalidatePath("/dashboard");
+}
+
+export async function unblockAction(f: FormData) {
+  await unblockById(getDb(), await currentActor(), str(f, "blockId")).catch(() => undefined);
+  revalidatePath("/account");
 }
 
 export async function saveTrustedContactAction(_: FormState, f: FormData): Promise<FormState> {

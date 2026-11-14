@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  blockAction, cancelVisitAction, checkInAction, checkOutAction, listingStatusAction, requirementStatusAction, respondAction, withdrawAction,
+  blockAction, blockFromInterestAction, cancelVisitAction, checkInAction, checkOutAction, listingStatusAction, requirementStatusAction, respondAction, withdrawAction,
 } from "@/app/actions";
 import { AgreedRulesCard } from "@/components/dashboard/AgreedRulesCard";
+import { TrustCard } from "@/components/dashboard/TrustCard";
+import { SAFETY_TIPS_LANDLORD } from "@/lib/trust";
 import { VisitActionButton } from "@/components/dashboard/VisitActionButton";
 import { AppealForm, TrustedShare, VisitConfirm, VisitPlanner } from "@/components/dashboard/VisitForms";
 import { EmergencyStrip } from "@/components/site/EmergencyStrip";
@@ -122,10 +124,12 @@ export default async function Dashboard() {
                 <p className="mt-1 font-mono text-xs text-faint">{i.tenant.budgetBand} · {i.tenant.tenantType.toLowerCase()} · {i.tenant.diet.toLowerCase().replace("_", "-")}</p>
                 <p className="mt-3 text-[15px] text-soft">“{i.message}”</p>
                 {i.tenant.intro ? <p className="mt-2 text-sm text-faint">{i.tenant.intro}</p> : null}
+                <TrustCard trust={i.trust} screening={i.screening} />
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <form action={respondAction}><input type="hidden" name="interestId" value={i.id} /><input type="hidden" name="decision" value="ACCEPT" /><Btn tone="solid">Accept</Btn></form>
                 <form action={respondAction}><input type="hidden" name="interestId" value={i.id} /><input type="hidden" name="decision" value="DECLINE" /><Btn>Decline</Btn></form>
+                <form action={blockFromInterestAction}><input type="hidden" name="interestId" value={i.id} /><Btn tone="danger">Block</Btn></form>
               </div>
             </li>
           ))}
@@ -190,6 +194,9 @@ export default async function Dashboard() {
                 {v.asTenant && (v.status === "CONFIRMED" || v.status === "REQUESTED") ? (
                   <TrustedShare label="Share plan with" text={`I am visiting a home in ${v.listing.area} on ${fmtWhen(v.scheduledAt)}${v.representativeName ? `, meeting ${v.representativeName}` : ""}. Please call me if you do not hear from me within an hour.`} />
                 ) : null}
+                {!v.asTenant && (v.status === "CONFIRMED" || v.status === "REQUESTED") ? (
+                  <TrustedShare label="Share plan with" text={`I am showing my home in ${v.listing.area} on ${fmtWhen(v.scheduledAt)}${v.companion ? ". The visitor is bringing someone" : ""}. Please call me if you do not hear from me within an hour.`} />
+                ) : null}
                 {v.status === "CONFIRMED" || v.status === "REQUESTED" ? <a href={`/api/visits/${v.id}/ics`} className="inline-flex h-9 items-center rounded-full border border-line-strong px-4 text-sm hover:bg-raised">Add to calendar</a> : null}
                 {v.status === "CONFIRMED" || v.status === "REQUESTED" ? <VisitActionButton action={cancelVisitAction} visitId={v.id}>Cancel</VisitActionButton> : null}
               </div>
@@ -201,6 +208,15 @@ export default async function Dashboard() {
             </li>
           ))}
         </ul>
+        {me.isLandlord ? (
+          <details className="mt-4 rounded-2xl border border-line px-5 py-4">
+            <summary className="cursor-pointer text-[15px]">Showing your home? Stay safe</summary>
+            <ul className="mt-4 space-y-2 text-[15px] text-soft">
+              {SAFETY_TIPS_LANDLORD.map((t) => <li key={t}>· {t}</li>)}
+            </ul>
+            <p className="mt-3 text-xs text-faint">The “share plan” button opens a message to the trusted contact you saved on your account page.</p>
+          </details>
+        ) : null}
         <p className="mt-3 text-xs text-faint">Check-in and check-out are for you and the person you choose to tell. Gharmatch does not watch them and cannot send help.</p>
       </section>
 
