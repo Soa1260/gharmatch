@@ -25,6 +25,7 @@ export default function Privacy() {
         <li><strong>Verification dates, no ID files:</strong> when we check an ID, an ownership document or a building, we record <strong>only the type of check and its date</strong>. We never keep copies of your Aadhaar, PAN, passport or property papers.</li>
         <li><strong>Screening questions and answers:</strong> a landlord can set up to three short questions on a home. The answers a tenant types when sending interest are saved with that interest and shown to the landlord who asked.</li>
         <li><strong>Account facts:</strong> the date your account was created, whether our team has checked your ID, and the outcome of safety reports about your account or searches (whether a reviewer upheld or dismissed them). A landlord who receives your request sees a short summary of these, as described in section 2.</li>
+        <li><strong>After you delete your account:</strong> if a safety report about you, your homes or your searches is still open or was upheld at that moment, we keep a one-way scrambled fingerprint of your email address, not the address itself, for up to 12 months. It cannot be turned back into your email. It lets us notice if the same address signs up again. If there is no such report, nothing of this kind is kept.</li>
         <li><strong>People you block:</strong> a record of who you blocked, so they cannot write to you or see your details. It is removed with your account record, about 30 days after you delete your account.</li>
         <li><strong>Your declaration as a landlord:</strong> when you post a home, your choice of who is posting (owner, family member, caretaker or agent) and the date you confirmed you may let the home and will take no fee from tenants.</li>
         <li><strong>Trusted contact (optional):</strong> a name and number you enter so that “share plan” can address your own safety message when you visit or show a home. We never contact or message them.</li>
@@ -39,7 +40,7 @@ export default function Privacy() {
         <li><strong>Accepted matches only:</strong> your exact address, email and phone open to <strong>one specific person</strong> only after an interest between you is accepted.</li>
         <li><strong>Landlords who receive your request</strong> see a short “about this account” card before they decide: whether your account is new (made this week) or the month you joined, whether our team has checked your ID, and how many safety reports about your account or searches a reviewer has upheld. They also see your answers to their screening questions. The card shows facts about the account only, never your name, phone or email, and it is shown for searches by women and mixed groups too.</li>
         <li><strong>Extra care for women’s searches:</strong> for searches by women or mixed groups, landlords see only the requirements. No name or free-text introduction is shown until the tenant replies.</li>
-        <li><strong>Project maintainers (admins)</strong> can see flagged posts and safety reports, only to moderate abuse and support dispute snapshots.</li>
+        <li><strong>Project maintainers (admins)</strong> can see flagged posts and safety reports, only to moderate abuse and support dispute snapshots. They can also look up the name, email and phone behind an account, but only for a safety report or a lawful request from the police, a court or a regulator. Each lookup needs a written reason and is saved with who looked and when.</li>
       </ul>
 
       <h2>3. What we do not do</h2>
@@ -62,7 +63,7 @@ export default function Privacy() {
       <p>Some providers may process or back up data on servers outside India, including in the United States or the European Union, unless the Central Government restricts a destination under Section 16 of the DPDP Act, 2023. Because the project uses free and low-cost tiers, a provider’s limits or outage can make the service slow or unavailable.</p>
 
       <h2>5. Safety, mediation and law enforcement</h2>
-      <p>We may keep and share saved report copies, account ids, messages and timestamps:</p>
+      <p>We may keep and share saved report copies, account ids, messages and timestamps, and, for an account that still exists, its name, email and phone:</p>
       <ol>
         <li>with the police or a court when we receive a valid legal request under Indian law, including Section 94 of the Bharatiya Nagarik Suraksha Sanhita, 2023 or the Information Technology Act, 2000, or when needed in good faith to prevent serious physical harm, unlawful surveillance, extortion or fraud; and</li>
         <li>with both people in a match during <strong>Step 2, neutral rule-snapshot facilitation</strong>, under our <Link href="/terms">Terms of Use</Link>, so neither can falsely say the house rules were different when they matched.</li>
@@ -72,7 +73,7 @@ export default function Privacy() {
       <ul>
         <li><strong>Listings expire after 30 days</strong> unless you press “Still available” on your dashboard.</li>
         <li><strong>Edit and delete:</strong> you can edit or delete your listings and searches at any time.</li>
-        <li><strong>Account deletion and withdrawing consent:</strong> delete your account from the <Link href="/account">account page</Link>. Your name, email, phone, picture and trusted contact are removed at once, and the empty record is removed for good after 30 days. If you are part of an active or past abuse report, its saved copy is kept to prevent repeat abuse and meet legal duties, as the DPDP Act allows. Processing done before you withdraw consent stays lawful.</li>
+        <li><strong>Account deletion and withdrawing consent:</strong> delete your account from the <Link href="/account">account page</Link>. Your name, email, phone, picture and trusted contact are removed at once, and the empty record is removed for good after 30 days, or after up to 12 months if it holds the email fingerprint described in section 1. If you are part of an active or past abuse report, its saved copy is kept to prevent repeat abuse and meet legal duties, as the DPDP Act allows. Processing done before you withdraw consent stays lawful.</li>
       </ul>
       <p>Under the DPDP Act, 2023 you have the right to:</p>
       <ol>

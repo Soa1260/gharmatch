@@ -12,6 +12,8 @@ import { PostgresRateLimiter } from "@/server/rateLimit";
 import { createRequirement, setRequirementStatus, updateRequirement } from "@/server/requirements";
 import { fileAppeal } from "@/server/incidents";
 import { cancelVisit, checkIn, checkOut, confirmVisit, proposeVisit } from "@/server/visits";
+import { buildRecordsSheet } from "@/lib/recordsSheet";
+import { lookupRecords, type AccountRecord } from "@/server/records";
 import { currentActor } from "@/server/session";
 
 export interface FormState {
@@ -307,6 +309,24 @@ export async function checkOutAction(_: FormState, f: FormData): Promise<FormSta
   }
   revalidatePath("/dashboard");
   return { ok: "Checked out. Glad you are safe." };
+}
+
+export interface RecordsState {
+  error?: string;
+  record?: AccountRecord;
+  sheet?: string;
+}
+
+/** Admin only, checked again inside the service. Every lookup needs a written reason and is logged. */
+export async function lookupRecordsAction(_: RecordsState, f: FormData): Promise<RecordsState> {
+  try {
+    const reason = str(f, "reason");
+    const record = await lookupRecords(getDb(), await currentActor(), { query: str(f, "query"), reason });
+    return { record, sheet: buildRecordsSheet(record, reason) };
+  } catch (e) {
+    const s = toState(e);
+    return { error: s.fieldErrors ? Object.values(s.fieldErrors).join(" ") : s.error };
+  }
 }
 
 export async function fileAppealAction(_: FormState, f: FormData): Promise<FormState> {

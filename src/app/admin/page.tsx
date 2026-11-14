@@ -35,6 +35,7 @@ export default async function Admin() {
   const tiles = [
     { href: "/admin/reports", title: "Reports and held listings", note: `${open} open reports · ${held.length} held`, body: "Urgent and high-severity reports come first. Held listings are further down the same page, with Release hold." },
     { href: "/admin/verification", title: "Verification", note: "by listing", body: "Record identity checks, ownership documents and inspections. This does not release a held listing." },
+    { href: "/admin/records", title: "Account records", note: "logged", body: "Look up the name, email and phone behind an account for a report or a lawful request, and prepare a records sheet. Every lookup is saved with your reason." },
   ];
 
   return (

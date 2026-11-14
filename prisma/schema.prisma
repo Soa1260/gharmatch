@@ -85,6 +85,14 @@ model User {
   appeals      Appeal[]
   blocking     Block[]       @relation("Blocker")
   blockedBy    Block[]       @relation("Blocked")
+
+  /**
+   * Set only when an account is deleted while a safety report about it is open or upheld. A one-way keyed fingerprint
+   * of the email, never the email itself, kept for a limited time to spot a return under the same address.
+   */
+  emailHash String?
+
+  @@index([emailHash])
 }
 
 model Account {

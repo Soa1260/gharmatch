@@ -69,6 +69,9 @@ export const REQUESTS_FROM = ["ANYONE", "ESTABLISHED", "ID_CHECKED"] as const;
 export type RequestsFrom = (typeof REQUESTS_FROM)[number];
 export const ESTABLISHED_ACCOUNT_DAYS = 7;
 export const MAX_SCREENING_QUESTIONS = 3;
+/** An emptied account record is removed this long after deletion, or after FINGERPRINT_RETENTION_DAYS if it holds an email fingerprint. */
+export const DELETED_RECORD_DAYS = 30;
+export const FINGERPRINT_RETENTION_DAYS = 365;
 /** A home stops taking new requests while this many wait for an answer, so a landlord's inbox cannot be flooded. */
 export const MAX_PENDING_PER_LISTING = 25;
 /** One tenant can have this many requests waiting at once. Withdrawing or an answer frees a place. */

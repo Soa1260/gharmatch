@@ -4,6 +4,8 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaClient } from "@/generated/prisma/client";
 import { databaseUrl } from "@/lib/dbUrl";
+import { getDb } from "@/server/db";
+import { flagRejoin } from "@/server/rejoin";
 
 /** The Auth.js adapter needs email on user rows, so it gets a client without the default omit. */
 const globalForAuth = globalThis as unknown as { authDb?: PrismaClient };
@@ -21,6 +23,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // Google only: an account has to exist at Google, which rules out throwaway addresses made up on the spot.
   providers: [Google],
   events: {
+    /** A new account that shares an email with one deleted under a report is noted for the review team. Never blocks sign-in. */
+    async createUser({ user }) {
+      try {
+        if (user.id) await flagRejoin(getDb(), user.id, user.email);
+      } catch {
+        console.error(JSON.stringify({ level: "error", msg: "rejoin check failed" }));
+      }
+    },
     /** Google has already confirmed the address, so a Google sign-in counts as a verified email. Magic links verify themselves. */
     async signIn({ user, account, profile }) {
       if (account?.provider !== "google" || !user?.id) return;
