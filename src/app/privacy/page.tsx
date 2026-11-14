@@ -23,7 +23,11 @@ export default function Privacy() {
         <li><strong>Your agreement:</strong> the date and version of the Terms and Privacy Policy you accepted, so we can record your consent and ask again if they change.</li>
         <li><strong>Listings, searches and messages:</strong> your house rules and preferences, photos shrunk to WebP, a private full address, an approximate map pin, interest messages and visit plans.</li>
         <li><strong>Verification dates, no ID files:</strong> when we check an ID, an ownership document or a building, we record <strong>only the type of check and its date</strong>. We never keep copies of your Aadhaar, PAN, passport or property papers.</li>
-        <li><strong>Trusted contact (optional):</strong> a name and number you enter to address your own visit-safety message. We never contact or message them.</li>
+        <li><strong>Screening questions and answers:</strong> a landlord can set up to three short questions on a home. The answers a tenant types when sending interest are saved with that interest and shown to the landlord who asked.</li>
+        <li><strong>Account facts:</strong> the date your account was created, whether our team has checked your ID, and the outcome of safety reports about your account or searches (whether a reviewer upheld or dismissed them). A landlord who receives your request sees a short summary of these, as described in section 2.</li>
+        <li><strong>People you block:</strong> a record of who you blocked, so they cannot write to you or see your details. It is removed with your account record, about 30 days after you delete your account.</li>
+        <li><strong>Your declaration as a landlord:</strong> when you post a home, your choice of who is posting (owner, family member, caretaker or agent) and the date you confirmed you may let the home and will take no fee from tenants.</li>
+        <li><strong>Trusted contact (optional):</strong> a name and number you enter so that “share plan” can address your own safety message when you visit or show a home. We never contact or message them.</li>
         <li><strong>Agreed house rules:</strong> when an interest is accepted, a saved copy of the home’s house rules and disclosures at that moment, so both sides can check what was agreed.</li>
         <li><strong>Safety report copies:</strong> when someone files a report, a saved copy of the reported listing, search or account, account ids, and recent messages between the two accounts, so evidence cannot be erased by editing or deleting.</li>
         <li><strong>Anonymous counters:</strong> simple counts such as “interest sent”, with no name, email or phone attached, to see whether the project is useful.</li>
@@ -33,6 +37,7 @@ export default function Privacy() {
       <ul>
         <li><strong>Public visitors</strong> see listings with house rules, photos and a map showing only an area of about 1 km. They never see your phone, email or exact address.</li>
         <li><strong>Accepted matches only:</strong> your exact address, email and phone open to <strong>one specific person</strong> only after an interest between you is accepted.</li>
+        <li><strong>Landlords who receive your request</strong> see a short “about this account” card before they decide: whether your account is new (made this week) or the month you joined, whether our team has checked your ID, and how many safety reports about your account or searches a reviewer has upheld. They also see your answers to their screening questions. The card shows facts about the account only, never your name, phone or email, and it is shown for searches by women and mixed groups too.</li>
         <li><strong>Extra care for women’s searches:</strong> for searches by women or mixed groups, landlords see only the requirements. No name or free-text introduction is shown until the tenant replies.</li>
         <li><strong>Project maintainers (admins)</strong> can see flagged posts and safety reports, only to moderate abuse and support dispute snapshots.</li>
       </ul>

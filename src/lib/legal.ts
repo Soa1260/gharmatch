@@ -8,8 +8,8 @@
  */
 
 /** Bump when either document changes in a way that needs people to agree again. */
-export const POLICY_VERSION = "2026-11-09.4";
-export const POLICY_UPDATED = "9 November 2026";
+export const POLICY_VERSION = "2026-11-14.1";
+export const POLICY_UPDATED = "14 November 2026";
 
 export const TO_FILL = "[to be filled before launch]";
 export const LOCATION = "Ahmedabad / Gandhinagar, Gujarat, India";
