@@ -1,9 +1,8 @@
-# Legal text: what is in the product, and what a lawyer must check
+# Legal and privacy architecture: what the code backs up
 
-The Terms of Use (`/terms`) and Privacy Policy (`/privacy`) are the "community edition": written for a free,
-open-source project run by one maintainer on free-tier hosting. They were drafted outside this repository and then
-adapted so they describe what the app really does. Neither is legal advice, and both stay marked as drafts until a
-lawyer signs them off.
+The Terms of Use (`/terms`) and Privacy Policy (`/privacy`) are the "community edition", written for a free,
+open-source project run by one maintainer on free-tier hosting. This page maps what they promise to the code that
+enforces it. It is not legal advice.
 
 ## What the code backs up
 
@@ -15,7 +14,7 @@ lawyer signs them off.
 | We do not keep Google's tokens | Cleared on every sign-in (`src/auth.ts`) |
 | Phone required to rent out a home | Profile schema and the listing service (`requirePhoneForLandlord`) |
 | No brokers, no fees (Terms 1.3A) | Each home needs a "posted by" choice and a declaration (`Listing.postedBy`, `authorisationDeclaredAt`, `requireDeclaration`); at most 5 live or paused homes per account (`MAX_LIVE_LISTINGS`, also checked when a home is brought back); tenants can report "Broker, or a fee was asked for". The app cannot prove who an owner is, so this rests on the declaration, reports and the daily check of `/admin/reports` |
-| Landlord tools: trust card, screening questions, request rules | The card shows facts only: account age, ID checked or not (`identityCheckedAt`), upheld reports (ACTIONED reports on the person or their searches). It is shown to the landlord who received the request and nobody else (`listMyInterests`). Screening answers are saved with the interest (`Interest.screening`). The privacy policy now says a landlord sees this card, including for women's and mixed searches (`POLICY_VERSION` 2026-11-14.1). Ask the lawyer to confirm the wording. |
+| Landlord tools: trust card, screening questions, request rules | The card shows facts only: account age, ID checked or not (`identityCheckedAt`), upheld reports (ACTIONED reports on the person or their searches). It is shown to the landlord who received the request and nobody else (`listMyInterests`). Screening answers are saved with the interest (`Interest.screening`). The privacy policy now says a landlord sees this card, including for women's and mixed searches (`POLICY_VERSION` 2026-11-14.1). |
 | Account deletion scrubs personal data, shell removed after 30 days | `src/server/deletion.ts`, daily job |
 | Usage counts carry no identifiers | `Event` table has a name and a time only |
 | Phone and email kept out of logs | Prisma omits them by default; services select them explicitly |
@@ -26,7 +25,7 @@ lawyer signs them off.
 - **Best-effort availability.** Terms 1.2 says nothing is promised when free-tier limits (Vercel Hobby, Neon free) cause slowness, outages or undelivered messages.
 - **No street address.** Only `Ahmedabad / Gandhinagar, Gujarat, India` is printed, so a personal home address is never on a public page. The Grievance Officer is the project maintainer, reachable by `NEXT_PUBLIC_GRIEVANCE_EMAIL`.
 
-## Changes made to the drafts so they match the product
+## How the text was matched to the product
 
 - Sign-in is **Google only**, so "magic link" wording was removed.
 - The phone number is **required for landlords** (optional for tenants), not optional for everyone.
@@ -38,19 +37,6 @@ lawyer signs them off.
 - It names the maintainer as the **Data Fiduciary**, which the DPDP Act expects a notice to identify.
 - It records that **agreement is saved per version** and that **agreed house rules are saved** at acceptance.
 - Release (7.2) starts with "to the fullest extent the law allows".
-
-## Questions for the lawyer
-
-1. **Licence.** The repository is under the **GNU AGPL v3** (`LICENSE`, `"license": "AGPL-3.0-only"` in `package.json`), so the Terms' "open source" wording is accurate. Under AGPL section 13, anyone using a modified hosted copy must be offered its source, which is why the footer links to the repository. Two things to confirm: that you hold the copyright to everything in the repo (including anything you accept from contributors later, so consider a contributor agreement), and how the AGPL sits with charging for features in future. It allows selling, but a modified hosted version must publish its source.
-2. **Response times.** The text promises acknowledgement in 24 hours, resolution in 15 days, and 72 hours for urgent privacy or impersonation reports. As I read the IT Rules, 2021, complaints about intimate images or impersonation may need action within **24 hours**, and 72 hours relates to helping government agencies. Confirm before launch, and confirm one person can staff it.
-3. **The ₹0 liability cap and release (Terms 7).** The cap is "₹0, or if applicable law requires a nominal floor, a maximum of ₹100", so the clause still stands if a court will not enforce a zero cap. Confirm that wording, what holds against consumers, and that an indemnity from users is fine.
-4. **Intermediary status** under Section 79 depends on how you behave (due diligence, takedown on notice). Confirm that the admin hold and review features support that.
-5. **DPDP Act.** Confirm the notice wording, whether a consent manager or Data Protection Officer is needed at your size, the cross-border statement, and how to handle a nomination request.
-6. **An individual as operator.** The Terms are made "with the project maintainer(s)", so you carry personal liability. Ask whether a company or LLP, even a small one, should be named instead.
-7. **Mediation Act, 2023**: confirm Step 3 works as a pre-litigation step.
-8. **Women-only and men-only listings**: confirm they are lawful and how to describe them.
-9. **Police tenant verification**: confirm what applies to landlords in Gujarat and say so in the Terms.
-10. **Grievance Officer's name.** The officer is shown as "Ayush", a first name only (`NEXT_PUBLIC_GRIEVANCE_OFFICER`). Ask whether the IT Rules require the full name of a real, identifiable person, and if so, replace it with the full name (a short form such as "Ayush" is fine).
 
 ## Where the facts about you come from
 

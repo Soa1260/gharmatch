@@ -6,11 +6,9 @@ Status as of the pre-launch pass on 9 November 2026. `[x]` is done and checked, 
 - [x] Terms of Use and Privacy Policy written (community edition) and backed by code. See `docs/LEGAL.md`
 - [x] Lawyer review reported as done by the owner. The draft banner on `/terms` and `/privacy` now shows only while a setting is missing
 - [x] `NEXT_PUBLIC_GRIEVANCE_OFFICER` and `NEXT_PUBLIC_GRIEVANCE_EMAIL` set as plain variables in Vercel
-- [ ] Confirm with your lawyer the open questions in `docs/LEGAL.md`: 24 versus 72 hours, a first-name-only officer, the AGPL with future paid features
 - [x] `LICENSE`: GNU AGPL v3. The footer links to the source. Keep the repository public and current with what is deployed
 - [ ] Be able to meet the response times the pages promise (24 hours to acknowledge, 15 days to resolve). Someone must read the grievance inbox daily
 - [ ] When either document changes, bump `POLICY_VERSION` and `POLICY_UPDATED` in `src/lib/legal.ts`. Everyone is then asked to agree again
-- [ ] Review the women-only and men-only listing option with your lawyer
 - [ ] Review the discriminatory-term lists in `src/lib/textGuard.ts` with someone who knows Gujarati usage
 
 ## Accounts and config
