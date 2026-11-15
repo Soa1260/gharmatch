@@ -25,6 +25,7 @@ export function Footer() {
         </div>
         <ul className="space-y-0 text-sm text-soft">
           <li><Link href="/listings" className="inline-block py-2 hover:text-text">Browse homes</Link></li>
+          <li><Link href="/blog" className="inline-block py-2 hover:text-text">Updates</Link></li>
           <li><Link href="/safety" className="inline-block py-2 hover:text-text">Safety guide</Link></li>
           <li><Link href="/safety/women" className="inline-block py-2 hover:text-text">Safety for women</Link></li>
           <li><Link href="/help" className="inline-block py-2 text-danger hover:text-text">Need help now</Link></li>

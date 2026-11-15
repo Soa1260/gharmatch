@@ -11,6 +11,7 @@ const links = [
   { href: "/listings", label: "Browse homes" },
   { href: "/#how", label: "How it works" },
   { href: "/safety", label: "Safety" },
+  { href: "/blog", label: "Updates" },
 ];
 
 const POST_HREF = "/listings/new";
