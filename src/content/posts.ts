@@ -149,7 +149,7 @@ export const posts: Post[] = [
         id: "free-and-open",
         heading: "Free and open",
         body: [
-          { type: "p", text: "Gharmatch is **free**, with no ads, and the code is public for anyone to read. It is run by one person on free hosting, so it can sometimes be slow." },
+          { type: "p", text: "Gharmatch is **free**, with no ads, and the code is public for anyone to read. It runs on free hosting, so it can sometimes be slow." },
           { type: "p", text: "Homes stay listed for 30 days, then ask the landlord if they are still available. That keeps the list fresh." },
           { type: "callout", text: "Got a home to rent, or looking for one? Both take about two minutes to post." },
         ],
