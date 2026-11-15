@@ -16,7 +16,7 @@ export const LOCATION = "Ahmedabad / Gandhinagar, Gujarat, India";
 export const REPO_URL = "https://github.com/Soa1260/gharmatch";
 
 export interface Operator {
-  /** The project maintainer who is also the Grievance Officer. */
+  /** A project maintainer who is also the Grievance Officer. */
   officer: string;
   email: string;
   /** Names of settings that are still empty. The pages show a draft banner while this is not empty. */

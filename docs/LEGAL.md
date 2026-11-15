@@ -1,7 +1,7 @@
 # Legal and privacy architecture: what the code backs up
 
 The Terms of Use (`/terms`) and Privacy Policy (`/privacy`) are the "community edition", written for a free,
-open-source project run by one maintainer on free-tier hosting. This page maps what they promise to the code that
+open-source project on free-tier hosting. This page maps what they promise to the code that
 enforces it. It is not legal advice.
 
 ## What the code backs up
@@ -24,7 +24,7 @@ enforces it. It is not legal advice.
 
 - **Not "free forever".** Terms 1.1 reserves the right to add optional paid features or fees later, with notice and updated terms, and the Privacy Policy says contact details will still never be sold. This avoids a bait-and-switch claim if hosting costs force a change.
 - **Best-effort availability.** Terms 1.2 says nothing is promised when free-tier limits (Vercel Hobby, Neon free) cause slowness, outages or undelivered messages.
-- **No street address.** Only `Ahmedabad / Gandhinagar, Gujarat, India` is printed, so a personal home address is never on a public page. The Grievance Officer is the project maintainer, reachable by `NEXT_PUBLIC_GRIEVANCE_EMAIL`.
+- **No street address.** Only `Ahmedabad / Gandhinagar, Gujarat, India` is printed, so a personal home address is never on a public page. The Grievance Officer is a project maintainer, reachable by `NEXT_PUBLIC_GRIEVANCE_EMAIL`.
 
 ## How the text was matched to the product
 
@@ -35,7 +35,7 @@ enforces it. It is not legal advice.
 - Emails today are only about **reports and appeals**. The Privacy Policy says "essential service emails, such as reports and appeals, or critical account and safety notices", which leaves room to add safety notices later, but never marketing.
 - The Privacy Policy states users' duties under Section 15 of the DPDP Act (no impersonation, no false information, no false or frivolous reports) and the security measures: HTTPS and server-side access controls.
 - The privacy text no longer says data is "encrypted" at providers, which we cannot vouch for.
-- It names the maintainer as the **Data Fiduciary**, which the DPDP Act expects a notice to identify.
+- It names a project maintainer as the **Data Fiduciary**, which the DPDP Act expects a notice to identify.
 - It records that **agreement is saved per version** and that **agreed house rules are saved** at acceptance.
 - Release (7.2) starts with "to the fullest extent the law allows".
 
