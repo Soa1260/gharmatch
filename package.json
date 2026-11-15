@@ -24,7 +24,7 @@
     "@vercel/analytics": "^2.0.1",
     "aws4fetch": "^1.0.20",
     "dotenv": "^18.0.9",
-    "motion": "^14.10.1",
+    "motion": "^14.13.0",
     "next": "^16.4.5",
     "next-auth": "^5.0.0-beta.32",
     "pg": "^8.23.1",
